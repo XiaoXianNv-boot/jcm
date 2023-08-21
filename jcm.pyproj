@@ -12,6 +12,7 @@
     <OutputPath>.</OutputPath>
     <Name>jcm</Name>
     <RootNamespace>jcm</RootNamespace>
+    <InterpreterId>Global|VisualStudio|Python33</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,6 +32,7 @@
     <Folder Include="language\Tools\install.py\__pycache__\" />
     <Folder Include="lib\" />
     <Folder Include="lib\7z\" />
+    <Folder Include="server\main\" />
     <Folder Include="web\" />
     <Folder Include="Tools\" />
     <Folder Include="server\" />
@@ -59,9 +61,13 @@
     <Compile Include="language\server\init.py\zh_CN.py" />
     <Compile Include="language\Tools\install.py\zh_CN.py" />
     <Compile Include="server\init.py" />
+    <Compile Include="server\main\http.py" />
     <Compile Include="server\run.py" />
     <Compile Include="Tools\install.py" />
     <Compile Include="Tools\Tools.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|VisualStudio|Python33" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
