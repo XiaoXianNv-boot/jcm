@@ -1,4 +1,4 @@
 # jcm
 ## Jiang Cluster Management
 
--- .comfig ÅäÖÃÎÄ¼ş
+- .comfig é…ç½®æ–‡ä»¶
