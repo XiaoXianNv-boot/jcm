@@ -51,6 +51,7 @@
     <Content Include="lib\python-3.8.2.7z" />
     <Content Include="lib\python-3.8.2.exe" />
     <Content Include="lib\python.7z" />
+    <Content Include="README.md" />
     <Content Include="Tools\install.bat" />
     <Content Include="Tools\install.sh" />
   </ItemGroup>
@@ -58,6 +59,7 @@
     <Compile Include="language\server\init.py\zh_CN.py" />
     <Compile Include="language\Tools\install.py\zh_CN.py" />
     <Compile Include="server\init.py" />
+    <Compile Include="server\run.py" />
     <Compile Include="Tools\install.py" />
     <Compile Include="Tools\Tools.py" />
   </ItemGroup>
