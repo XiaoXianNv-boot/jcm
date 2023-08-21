@@ -22,6 +22,13 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="language\" />
+    <Folder Include="language\server\" />
+    <Folder Include="language\server\init.py\" />
+    <Folder Include="language\server\init.py\__pycache__\" />
+    <Folder Include="language\Tools\" />
+    <Folder Include="language\Tools\install.py\" />
+    <Folder Include="language\Tools\install.py\__pycache__\" />
     <Folder Include="lib\" />
     <Folder Include="lib\7z\" />
     <Folder Include="web\" />
@@ -29,6 +36,9 @@
     <Folder Include="server\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="language\server\init.py\__pycache__\zh_CN.cpython-310.pyc" />
+    <Content Include="language\server\init.py\__pycache__\zh_CN.cpython-36.pyc" />
+    <Content Include="language\Tools\install.py\__pycache__\zh_CN.cpython-36.pyc" />
     <Content Include="lib\7z\7z.dll" />
     <Content Include="lib\7z\7z.exe" />
     <Content Include="lib\bash.zip" />
@@ -45,6 +55,8 @@
     <Content Include="Tools\install.sh" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="language\server\init.py\zh_CN.py" />
+    <Compile Include="language\Tools\install.py\zh_CN.py" />
     <Compile Include="Tools\install.py" />
     <Compile Include="Tools\Tools.py" />
   </ItemGroup>
