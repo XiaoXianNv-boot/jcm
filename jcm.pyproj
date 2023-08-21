@@ -24,6 +24,7 @@
   <ItemGroup>
     <Folder Include="web\" />
     <Folder Include="Tools\" />
+    <Folder Include="server\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Tools\install.bat" />
