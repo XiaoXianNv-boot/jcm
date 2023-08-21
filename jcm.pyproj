@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="language\server\init.py\zh_CN.py" />
     <Compile Include="language\Tools\install.py\zh_CN.py" />
+    <Compile Include="server\init.py" />
     <Compile Include="Tools\install.py" />
     <Compile Include="Tools\Tools.py" />
   </ItemGroup>
