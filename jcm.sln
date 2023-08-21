@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33927.289
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "jcm", "jcm.pyproj", "{C071059E-37AE-4FE9-84F7-3EABC6C5F26F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C071059E-37AE-4FE9-84F7-3EABC6C5F26F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C071059E-37AE-4FE9-84F7-3EABC6C5F26F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BAAAE57F-85C3-47B1-BF88-DC8ADFFC260C}
+	EndGlobalSection
+EndGlobal
