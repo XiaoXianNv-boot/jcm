@@ -22,11 +22,25 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="lib\" />
+    <Folder Include="lib\7z\" />
     <Folder Include="web\" />
     <Folder Include="Tools\" />
     <Folder Include="server\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="lib\7z\7z.dll" />
+    <Content Include="lib\7z\7z.exe" />
+    <Content Include="lib\bash.zip" />
+    <Content Include="lib\CopyX.exe" />
+    <Content Include="lib\NET.exe" />
+    <Content Include="lib\python-3.10.5.7z" />
+    <Content Include="lib\python-3.10.5.exe" />
+    <Content Include="lib\python-3.6.7.7z" />
+    <Content Include="lib\python-3.6.7.exe" />
+    <Content Include="lib\python-3.8.2.7z" />
+    <Content Include="lib\python-3.8.2.exe" />
+    <Content Include="lib\python.7z" />
     <Content Include="Tools\install.bat" />
     <Content Include="Tools\install.sh" />
   </ItemGroup>
