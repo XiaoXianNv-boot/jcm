@@ -1,0 +1,12 @@
+{"for":"10","server":[
+{"Package":"VM","name":"VM","Version":"V0.2","Depends":"main","License":"GPL-2.0","rul":"http://openwrt.lan/data/Blog/www/jcm/pkg/VM_V0.2.pkg","Description":"给 VMware Workstation 设计的控制台"},
+{"Package":"code-server","name":"code-server","Version":"V0.2","Depends":"main","License":"GPL-2.0","rul":"http://openwrt.lan/data/Blog/www/jcm/pkg/code-server_V0.2.pkg","Description":"code-server"},
+{"Package":"main","name":"首页","Version":"V0.2","Depends":"main","License":"GPL-2.0","rul":"http://openwrt.lan/data/Blog/www/jcm/pkg/main_V0.2.pkg","Description":"此软件包包含基本文件系统和系统脚本"},
+{"Package":"docker","name":"Docker","Version":"V0.2","Depends":"file","License":"GPL-2.0","rul":"http://openwrt.lan/data/Blog/www/jcm/pkg/docker_V0.2.pkg","Description":"Docker 控制台"},
+{"Package":"hsk","name":"花生壳","Version":"V0.2","Depends":"main","License":"GPL-2.0","rul":"http://openwrt.lan/data/Blog/www/jcm/pkg/hsk_V0.2.pkg","Description":"花生壳内外穿透客户端"},
+{"Package":"APP","name":"应用商店","Version":"V0.2","Depends":"main","License":"GPL-2.0","rul":"http://openwrt.lan/data/Blog/www/jcm/pkg/APP_V0.2.pkg","Description":"软件的应用商店"},
+{"Package":"file","name":"文件管理","Version":"V0.2","Depends":"file","License":"GPL-2.0","rul":"http://openwrt.lan/data/Blog/www/jcm/pkg/file_V0.2.pkg","Description":"文件管理"},
+{"Package":"homeassistant","name":"Home Assistant","Version":"V0.2","Depends":"main,docker","License":"GPL-2.0","rul":"http://openwrt.lan/data/Blog/www/jcm/pkg/homeassistant_V0.2.pkg","Description":"Home Assistant"},
+{"Package":"GroupControl","name":"集群任务","Version":"V0.2","Depends":"main","License":"GPL-2.0","rul":"http://openwrt.lan/data/Blog/www/jcm/pkg/GroupControl_V0.2.pkg","Description":"集群任务控制"},
+{"Package":"frpc","name":"frpc","Version":"V0.2","Depends":"main","License":"GPL-2.0","rul":"http://openwrt.lan/data/Blog/www/jcm/pkg/frpc_V0.2.pkg","Description":"frp内网穿透客户端"}
+]}

@@ -41,10 +41,13 @@ except Exception as e:
     print(e.args)
 
 def pr(new_client_socket,data):
-    print(data.decode("utf-8"))
+    print(data.decode("utf-8"),end='')
 
 OS_ = platform.system()
 if OS_ == 'Windows':
+#    os.system("echo %PATH%")
+#    os.system("ls")
+#    os.system("pwd")
     install_diri = b"C:\jcm"
 else:
     install_diri = b"/usr/jcm"
@@ -67,8 +70,8 @@ print(text["port"] + "" + str(install_port))
 print(text["boot"] + "" + install_boot.decode("utf-8"))
 print("#############################")
 
-
-os.environ['PATH'] = os.environ['PATH'] + ';' + install_dir.decode("utf-8") + "\\Tools\\.bash\\bin"
+if OS_ == 'Windows':
+    os.environ['PATH'] = os.environ['PATH'] + ';' + install_dir.decode("utf-8") + "\\Tools\\.bash\\bin"
 install_ = input(text["qr"]).encode("utf-8")
 if install_ != b'exit':
     OS_ = platform.system()
@@ -219,34 +222,37 @@ if install_ != b'exit':
         fs = open(install_dir.decode("utf-8") + "/run.sh","wb")
         fs.write(b"#!/bin/sh\n")
         fs.write(b"cd " + install_dir + b"\n")
-        fs.write(b"python3 server/init.py")
+        fs.write(b"python3 server/jcm.py")
         fs.close()
         os.system('chmod 777 ' + install_dir.decode("utf-8") + "/run.sh")
-        fs = open(install_dir.decode("utf-8") + "/jcm.service","wb")
-        fs.write(b"# It's not recommended to modify this file in-place, because it will be\n")
-        fs.write(b"# overwritten during package upgrades.\n")
-        fs.write(b"\n")
-        fs.write(b"[Unit]\n")
-        fs.write(b"Description=jcm server\n")
-        fs.write(b"After=network.target\n")
-        fs.write(b"\n")
-        fs.write(b"[Service]\n")
-        fs.write(b"Type=simple\n")
-        fs.write(b"ExecStart=sh " + install_dir + b"/run.sh\n")
-        fs.write(b"\n")
-        fs.write(b"[Install]\n")
-        fs.write(b"WantedBy=multi-user.target\n")
-        fs.close()
+        if os.path.exists("/bin/systemctl"):
+            fs = open(install_dir.decode("utf-8") + "/jcm.service","wb")
+            fs.write(b"# It's not recommended to modify this file in-place, because it will be\n")
+            fs.write(b"# overwritten during package upgrades.\n")
+            fs.write(b"\n")
+            fs.write(b"[Unit]\n")
+            fs.write(b"Description=jcm server\n")
+            fs.write(b"After=network.target\n")
+            fs.write(b"\n")
+            fs.write(b"[Service]\n")
+            fs.write(b"Type=simple\n")
+            fs.write(b"ExecStart=sh " + install_dir + b"/run.sh\n")
+            fs.write(b"\n")
+            fs.write(b"[Install]\n")
+            fs.write(b"WantedBy=multi-user.target\n")
+            fs.close()
+        elif os.path.exists("/etc/rc.d"):
+            os.system("cp run.sh /etc/rc.d/S99jcm")
        
 
         os.system('chmod 777 ' + install_dir.decode("utf-8") + "/jcm.service")
         os.system("cp  \"" + install_dir.decode("utf-8") + "/jcm.service\" \"/usr/lib/systemd/system/\"")
         if install_boot == b'yes':
             os.system("systemctl enable jcm.service")
-            os.system("systemctl status jcm.service")
+            #os.system("systemctl status jcm.service")
         else:
             os.system("systemctl disable jcm.service")
-            os.system("systemctl status jcm.service")
+            #os.system("systemctl status jcm.service")
         
     if OS_ == 'Windows':
         os.system("run.bat")

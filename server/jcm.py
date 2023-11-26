@@ -5,37 +5,59 @@ import os
 import sys
 import imp
 import locale
+import platform
 
 OS=''
 Versino = "0.0.2"
 port = 8888
 python = sys.executable
 dir = os.getcwd()
-OS = "Windows"
+OS = platform.system()
 OS_ = ''
 dev_name = ''
 bin = ''
 bash = ''
-gui = ''
+ipaddr = ''
+install = ''
 
 iftext = {}
 iftext["osname"] = "OS Name:"
 iftext["devname"] = "Host Name:"
+iftext["netdir"] = "Network Card(s):"
+iftext["netname"] = "Connection Name:"
+iftext["ip"] = "IP addrees(es)"
 text = {}
 text["init"] = "init"
 text["user"] = "User:"
 text["passwor"] = "Password:"
+#加载语言文件
 try:
     language = locale.getdefaultlocale()
     language = language[0]
     #language = "zh_CN"
-    run = imp.load_source('run',"language/server/init.py/" + language + ".py")
-    for textname in iftext.keys():
-        try:
-            textval = run.text[textname]
-            iftext[textname] = textval
-        except Exception as e:
-            print(e.args)
+    if os.path.exists("language/server/init.py/" + language + ".py"):
+        run = imp.load_source('run',"language/server/init.py/" + language + ".py")
+        for textname in iftext.keys():
+            try:
+                textval = run.text[textname]
+                iftext[textname] = textval
+            except Exception as e:
+                print(e.args)
+except Exception as e:
+    print(e.args)
+
+try:
+    language = locale.getdefaultlocale()
+    language = language[0]
+    #language = "zh_CN"
+    if os.path.exists("language/server/init.py/" + language + ".py"):
+        run = imp.load_source('run',"language/server/init.py/" + language + ".py")
+        for textname in text.keys():
+            try:
+                textval = run.text[textname]
+                text[textname] = textval
+            except Exception as e:
+                print(e.args)
 except Exception as e:
     print(e.args)
 
@@ -64,8 +86,34 @@ else:
 OS_ = OS
 
 def dpkginstall(name):
-    pkginstallname = ""
-
+    pkg = ''
+    if os.path.exists("/bin/apt"):
+        if name == "update":
+            os.system("apt update")
+        pkg = "apt install -y "
+    elif os.path.exists("/bin/yum"):
+        pkg = "yum install -y "
+    elif os.path.exists("/bin/opkg"):
+        if name == "update":
+            os.system("opkg update")
+        pkg = "opkg install "
+    if name == (python.split('/')[-1] + "-pip "):
+        if os.path.exists("/bin/pip3") == False:
+            os.system(pkg + " " + name)
+    elif name == "update":
+        print()
+    elif name == (python.split('/')[-1] + "-dev"):
+        if pkg == "yum":
+            os.system(pkg + "  " + python.split('/')[-1] + "-devel")
+        else:
+            os.system(pkg + "  " + name)
+    elif name == ("gcc"):
+        if os.path.exists("/bin/gcc") == False:
+            os.system(pkg + "  " + name)
+    elif name == ("curl"):
+        if os.path.exists("/bin/curl") == False:
+            os.system(pkg + "  " + name)
+    
 def pip(name):
     run = 1
     print('pip ' + name)
@@ -80,6 +128,7 @@ def pip(name):
                 run = pipinstall(name,link)
                 if run == 1:
                     run = pipinstall(name,link + " -i https://pypi.tuna.tsinghua.edu.cn/simple")
+
 def pipinstall(name,link):
     sh = os.popen("" + python + " -m pip list | " + bash + "grep '" + name + "'")
     shell = sh.read().split(' ')
@@ -106,15 +155,6 @@ def pipinstall(name,link):
         print(pr)
         return 0
     return 1
-
-    
-
-def file(dir,new):
-    if not os.path.exists(dir):
-        fs = open(dir,"w")
-        fs.write(new)
-        fs.close()
-
 def file(dir,new):
     if not os.path.exists(dir):
         fs = open(dir,"w")
@@ -122,6 +162,9 @@ def file(dir,new):
         fs.close()
 
 if OS == 'Windows':
+    ifnet = False
+    ifip = False
+    ifkg = False
     sh = os.popen("systeminfo")
     shell = sh.read().split('\n')
     for sh in range(len(shell)):
@@ -131,6 +174,35 @@ if OS == 'Windows':
             OS = sh[-1]
         if sh[0] == iftext["devname"]:
             dev_name = sh[-1]
+        if ifnet:
+            data = ''
+            kg = 0
+            if sh[0] != '':
+                ifnet = False
+            else:
+                for ss in sh:
+                    data = data + ss
+                    if ss != '':
+                        data = data + '\t'
+                    else:
+                        kg = kg + 1
+                sh = data.split('\t')
+                if ifip:
+                    if ifkg == False or ifkg == kg:
+                        if sh[0][0] == '[':
+                            sh = sh[0].split(' ')
+                            ipaddr = ipaddr + sh[1] + ' '
+                            if ifkg == 0:
+                                ifkg = kg
+                    else:
+                        ifip = False
+                        ipaddr = ipaddr + '\r'
+                if sh[0] == iftext["ip"]:
+                    ifip = True
+            if sh[0] == iftext["netname"]:
+                ipaddr = ipaddr + sh[1] + '\t'
+        if sh[0] == iftext["netdir"]:
+            ifnet = True
     if OS == '':
         print(text["oserr"])
         OS = 'Windows'
@@ -143,8 +215,9 @@ else:
         sh = os.popen("uname -n")
         shell = sh.read()
         OS = shell[:-1]
-        sh = os.popen('cat /etc/hostname')
-        dev_name = sh.read().split('\r')[0].split('\n')[0]
+    sh = os.popen('cat /etc/hostname')
+    dev_name = sh.read().split('\r')[0].split('\n')[0]
+
 
 if os.path.exists(".logs") == False:
     os.mkdir(".logs")
@@ -160,6 +233,9 @@ if os.path.exists(".config/main/user") == False:
     password = input(text["passwor"]).encode("utf-8")
     tools = imp.load_source('tools',"Tools/Tools.py")
     tools.newuser(user,password,b"0")
+    if OS_ == "Linux":
+        install = "L"
+
 if os.path.exists(".config/main/port"):
     fs = open(".config/main/port", "rb")
     ini = fs.read().decode("utf-8")
@@ -178,11 +254,11 @@ elif OS == "DSM":
     if os.path.exists("server/_common.py") == False:
         os.system('cp lib/_common.py ./server/')
 elif OS_ == "Linux":
-    pkginstall("update")
-    pkginstall(python.split('/')[-1] + "-pip ")
-    pkginstall(python.split('/')[-1] + "-dev")
-    pkginstall("gcc")
-    pkginstall("curl")
+    dpkginstall("update")
+    dpkginstall(python.split('/')[-1] + "-pip ")
+    dpkginstall(python.split('/')[-1] + "-dev")
+    dpkginstall("gcc")
+    dpkginstall("curl")
     pip("psutil")
 
     OS_ = os.popen('if [ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]; then   echo "chroot"; else   echo "Linux"; fi').read().split('\r')[0].split('\n')[0]
@@ -201,6 +277,8 @@ print("OS: " + OS)
 print("OS: " + OS_)
 print("port: " + str(port))
 print("theme: " + theme)
+for iipp in ipaddr.split('\r'):
+    print(iipp)
 
 info = {}
 info["Versino"] = Versino
@@ -211,16 +289,22 @@ info["OS_name"] = OS
 info["port"] = port
 info["dev_name"] = dev_name
 info["theme"] = theme
+info["Headers"] = "Server: JCM/1.0\r\n"
+info["ip"] = iipp
 info['debug'] = False
-info['debug'] = True
+info['tmp'] = '/tmp/jcm'
 
-if dev_name == ' JIANG-G5-5500-P': #调试设备
-    info['debug'] = True 
+if os.path.exists(".config/main/debug"):
+    info['debug'] = True
+
+if dev_name == ' JIANG-G5-5500-P':
+    info['debug'] = True
 if info['debug']:
     print('Debug')
 
 
 run = imp.load_source('run',"server/run.py")
-
+if install == "L":
+        os.system("systemctl start jcm.service")
 run.main(info)
 print("end")

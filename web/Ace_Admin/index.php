@@ -397,7 +397,7 @@
                     re_captcha();
                 },
                 error: function () {
-                    bootbox.confirm("登录失败，请重新尝试", function (result) {
+                    bootbox.confirm("链接失败", function (result) {
 
                     })
                     re_captcha();

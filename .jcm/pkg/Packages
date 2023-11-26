@@ -1,0 +1,14 @@
+Package:APP
+name:应用商店
+Version:V0.2
+Depends:main
+License:GPL-2.0
+Description:软件的应用商店
+
+Package:main
+name:首页
+Version:V0.2
+Depends:main
+License:GPL-2.0
+Description:此软件包包含基本文件系统和系统脚本
+
