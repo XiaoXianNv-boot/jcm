@@ -5,6 +5,7 @@ import imp
 import os
 import socket
 import time
+import ssl
 
 def mkdir(name):
     if os.path.exists(name) == False:
@@ -124,17 +125,22 @@ def Client(yyrul,prin,new_client_socket):
 
     prin(new_client_socket,(yyrul).encode("utf-8"))
     tmp = yyrul.split('/')
-    tmpp = (tmp[2] + ':80').split(':')
-    ruldir = '',''
-    if len(tmpp) == 2:
-        ruldir = yyrul.split(tmpp[0])
+    tmpp = ''
+    if tmp[0] == 'http:':
+        tmpp = (tmp[2] + ':80').split(':')
     else:
-        ruldir = yyrul.split(tmpp[0] + ':' + tmpp[1])
+        tmpp = (tmp[2] + ':443').split(':')
+    ruldir = "/".split('/')
+    ruldir[0] = tmp[0] + '//'
+    if len(tmpp) == 2:
+        ruldir[1] = yyrul[(len(ruldir[0] + tmpp[0])):]
+    else:
+        ruldir[1] = yyrul[(len(ruldir[0] + tmpp[0] + ':' + tmpp[1])):]
     #cat,cdata = Client(rul,prin,new_client_socket)
     #cat,cdata = run.Client(tmpp[0],int(tmpp[1]),ruldir[1] + '/Packages')
-    cat,cdata = crul(tmpp[0],int(tmpp[1]),ruldir[1],prin,new_client_socket)
+    cat,cdata = crul(tmpp[0],int(tmpp[1]),ruldir,prin,new_client_socket)
     if cat == '301':
-        prin(new_client_socket,('301\r\n').encode("utf-8"))
+        prin(new_client_socket,(' 301\r\n').encode("utf-8"))
         cat,cdata = Client(cdata.decode('utf-8'),prin,new_client_socket)
     elif cat == '302':
         prin(new_client_socket,(' 302\r\n        ').encode("utf-8"))
@@ -149,8 +155,21 @@ def crul(ip,dk,dir,prin,new_client_socket):
         socket.setdefaulttimeout(10)
         client = socket.socket() #定义协议类型,相当于生命socket类型,同时生成socket连接对象
         #client.connect(('openwrt.lan',80))
-        fsdata = 'GET ' + dir + ' HTTP/1.1\r\n'
-        fsdata = fsdata + 'Host: ' + ip + ':' + str(dk) + '\r\n'
+        if dir[0] == "https://":
+            client = ssl.wrap_socket(client,cert_reqs=ssl.CERT_REQUIRED,ca_certs='server/main/DigiCert Global Root CA.crt')
+        fsdata = 'GET ' + dir[1] + ' HTTP/1.1\r\n'
+        if dir[0] == "https://":
+            if dk == 443:
+                fsdata = fsdata + 'Host: ' + ip + '\r\n'
+            else:
+                fsdata = fsdata + 'Host: ' + ip + ':' + str(dk) + '\r\n'
+        else: 
+            if dk == 80:
+                fsdata = fsdata + 'Host: ' + ip + '\r\n'
+            else:
+                fsdata = fsdata + 'Host: ' + ip + ':' + str(dk) + '\r\n'
+        fsdata = fsdata + 'Referer: ' + dir[0] + ip + dir[1] + '\r\n'
+
         fs = open(".config/main/cookie","rb")
         for c in fs.read().decode("utf-8").split('\n'):
             if c.split(':')[0] == ip:
@@ -339,7 +358,7 @@ def crul(ip,dk,dir,prin,new_client_socket):
                             break
                         cdt = " [" + dows + "/" + ramall + "] " + '{:.2%}'.format(cd/dowscharcd)
                         prin(new_client_socket,(cdt).encode("utf-8"))
-                    if dir == '/assets/info':
+                    if dir[1] == '/assets/info':
                         if data[-1] == '}':
                             run = 1
             else:
@@ -392,6 +411,9 @@ def update(new_client_socket,post,Versino,Headers,info):
             fs.close()
             fs = open(".config/APP/pkg/main/2","wb")
             fs.write(b"http://jiang144.i234.me/jcm/pkg")
+            fs.close()
+            fs = open(".config/APP/pkg/main/3","wb")
+            fs.write(b"https://github.com/XiaoXianNv-boot/jcm/releases/download/Preview")
             fs.close()
     yuan = os.listdir(".config/APP/pkg/")
     yuan.sort(reverse=True)
