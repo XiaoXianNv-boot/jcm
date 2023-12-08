@@ -317,6 +317,16 @@ def main(new_client_socket,post,Headers,info,user):
     rr,rrr = rom(info)
     res = res + (('"rommain": "'+rr+'",\r\n').encode("utf-8"))
     res = res + (('"romnamemain": "'+rrr+'",\r\n').encode("utf-8"))
+    bat = '0'
+    if os.path.exists("/sys/class/power_supply"):
+        dirn = os.listdir("/sys/class/power_supply/") 
+        for d in dirn:
+            if os.path.exists("/sys/class/power_supply/" + d + "/type"):
+                if os.path.exists("/sys/class/power_supply/" + d + "/capacity"):
+                    cat = os.popen("cat /sys/class/power_supply/" + d + "/type").read().split('\n')[0]
+                    bat = os.popen("cat /sys/class/power_supply/" + d + "/capacity").read().split('\n')[0]
+    res = res + (('"bat": "'+bat+'",\r\n').encode("utf-8"))
+            #    break
 
     res = res + catcpu(OS)
 
