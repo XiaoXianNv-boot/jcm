@@ -1,5 +1,5 @@
 {
   "name": "设备信息",
-  "link": "/info?",
+  "link": "info?",
   "fa": "fa-file-o"
 }
