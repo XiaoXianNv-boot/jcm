@@ -40,6 +40,13 @@
     <script src="assets/js/html5shiv.min.js"></script>
     <script src="assets/js/respond.min.js"></script>
     <![endif]-->
+    <style>
+        @media (min-width: 768px){
+            .bankuan {
+                width: 50%;
+            }
+        }
+    </style>
 </head>
 
 <body class="no-skin">
@@ -173,11 +180,6 @@
 									</a>
 								</li-->
 
-								<li style="float: right">
-									<a data-toggle="tab" href="#tabdata" onclick="click:addtab();return false;">
-										&nbsp;&nbsp;&nbsp;&nbsp;添加 &nbsp;&nbsp;&nbsp;&nbsp;
-									</a>
-								</li>
 								<li class="active">				            
                                     <a data-toggle="tab" href="#tab1n" id="tab1" aria-expanded="true">					            
                                         <i class="green ace-icon fa fa-home bigger-120"></i>					            
@@ -200,21 +202,222 @@
 
 							<div class="tab-content" style="height: 100%;" id="tabn">
                                     
-								<div id="tab1n" class="tab-pane fade active in">				            
-                                    <p>
-                                        <button class="btn ">正在加载</button>
-                                    </p>			            
+								<div id="tab1n" class="tab-pane fade active in">
+                                        <!-- PAGE CONTENT BEGINS -->
+                                        <div class="table-header">
+                                            FRPC
+                                            <!--a href="#my-modal" role="button" class="pull-right green" data-toggle="modal"-->
+                                                <button id="bootbox-options" class="pull-right btn btn-sm btn-danger" data-toggle="modal"  onclick="up_biao();">
+                                                    <!--i class="ace-icon fa fa-times"></i-->
+                                                    刷新
+                                                </button>
+                                                
+                                                <button id="bootbox-options" class="pull-right btn btn-sm btn-success " data-toggle="modal" data-target="#my-modal"  onclick='add();'>
+                                                    <!--i class="ace-icon fa fa-times"></i-->
+                                                    添加
+                                                </button>
+                                            <!--/a-->
+                                        </div>
+                                        <!-- PAGE CONTENT BEGINS -->
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <table id="simple-table" class="table  table-bordered table-hover">
+                                                    <thead id="biaotou">
+                                                        <tr>
+                                                            <th class="detail-col">
+                                                                <label class="pos-rel">
+                                                                    <input type="checkbox" class="ace" />
+                                                                    <span class="lbl"></span>
+                                                                </label>
+                                                            </th>
+                                                            <th class="hidden-480">名称</th>
+                                                            <th class="hidden-480">链接</th>
+                                                            <th class="hidden-480">端口</th>
+                                                            <th class="hidden-480">状态</th>
+                                                            <th class="hidden-480">操作</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody id="biaoinfo">
+                                                        
+
+                                                    </tbody>
+
+                                                </table>
+                                            </div><!-- /.span -->
+                                        </div><!-- /.row -->		            
                                 </div>
 								<div id="tab2n" class="tab-pane fade in">				            
                                     <p>
-                                    <button class="btn ">正在加载</button>
-                                    </p>			            
+                                    <button id="start" class="btn ">正在加载</button>
+                                    <button id="boot" class="btn ">正在加载</button>
+                                    </p>		
+                                    <p>		
+                                        <div class="row">
+                                        <div class="bankuan widget-container-col ui-sortable" id="widget-container-col-1" style="float: left;">
+                                            <div class="widget-box ui-sortable-handle" id="widget-box-1">
+                                                <div class="widget-header">
+                                                    <h5 class="widget-title">基本设置</h5>
+
+                                                    <div class="widget-toolbar">
+                                                        
+                                                        <a href="#" data-action="collapse">
+                                                            <i class="ace-icon fa fa-chevron-up"></i>
+                                                        </a>
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="widget-body">
+                                                    <div class="widget-main">
+                                                        
+                                                        <label class="block clearfix">
+                                                            <span class="block input-icon input-icon-right">
+                                                                server <input type="text" id="server" class="" placeholder="服务器地址,如127.0.0.1">
+                                                            </span>
+                                                        </label> 
+                                                        <label class="block clearfix">
+                                                            <span class="block input-icon input-icon-right">
+                                                                port <input type="text" id="port" class="" placeholder="服务器端口,如7000">
+                                                            </span>
+                                                        </label>   
+                                                        <label class="block clearfix">
+                                                            <span class="block input-icon input-icon-right">
+                                                                token <input type="text" id="token" class="" placeholder="服务器端设置的token">
+                                                            </span>
+                                                        </label>   
+                                                    </div>
+                                                    
+                                                    <div class="widget-toolbox padding-8 clearfix">
+                                                        <button class="btn btn-xs btn-danger pull-left" onclick='get_post("server");return false;'>
+                                                            <i class="ace-icon fa fa-times"></i>
+                                                            <span class="bigger-110">还原</span>
+                                                        </button>
+
+                                                        <button class="btn btn-xs btn-success pull-right" onclick='up_post("server");return false;'>
+                                                            <span class="bigger-110">保存</span>
+
+                                                            <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>  
+                                        <div class="bankuan widget-container-col ui-sortable" id="widget-container-col-1" style="float: left;">
+                                            <div class="widget-box ui-sortable-handle" id="widget-box-1">
+                                                <div class="widget-header">
+                                                    <h5 class="widget-title">web后台</h5>
+
+                                                    <div class="widget-toolbar">
+                                                        
+                                                        <a href="#" data-action="collapse">
+                                                            <i class="ace-icon fa fa-chevron-up"></i>
+                                                        </a>
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="widget-body">
+                                                    <div class="widget-main">
+                                                        
+                                                        <label class="block clearfix">
+                                                            <span class="block input-icon input-icon-right">
+                                                            admin_addr <input type="text" id="admin_addr" class="" placeholder="授权链接地址,如0.0.0.0">
+                                                            </span>
+                                                        </label> 
+                                                        <label class="block clearfix">
+                                                            <span class="block input-icon input-icon-right">
+                                                            admin_port <input type="text" id="admin_port" class="" placeholder="web页面端口,如7500">
+                                                            </span>
+                                                        </label>   
+                                                        <label class="block clearfix">
+                                                            <span class="block input-icon input-icon-right">
+                                                            admin_user <input type="text" id="admin_user" class="" placeholder="web页面用户,如 admin">
+                                                            </span>
+                                                        </label> 
+                                                        <label class="block clearfix">
+                                                            <span class="block input-icon input-icon-right">
+                                                            admin_pwd <input type="text" id="admin_pwd" class="" placeholder="web页面密码,如 admin">
+                                                            </span>
+                                                        </label>   
+                                                    </div>
+                                                    
+                                                    <div class="widget-toolbox padding-8 clearfix">
+                                                        <button class="btn btn-xs btn-danger pull-left" onclick='get_post("web");return false;'>
+                                                            <i class="ace-icon fa fa-times"></i>
+                                                            <span class="bigger-110">还原</span>
+                                                        </button>
+
+                                                        <button class="btn btn-xs btn-success pull-right" onclick='up_post("web");return false;'>
+                                                            <span class="bigger-110">保存</span>
+
+                                                            <i class="ace-icon fa fa-arrow-right icon-on-right"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>  </div>
+                                        
+                                    </p>	      
                                 </div>
 								<div id="tab3n" class="tab-pane fade in">				            
-                                    		            
+                                <iframe id="logs" src="" width="100%" height="100%"></iframe>         
+                                </div>
+								<div id="tab4n" class="tab-pane fade in">				            
+                                       
                                 </div>
                             </div>
 							</div>
+                            <div id="my-modal" class="modal fade" tabindex="-1" data-backdrop=false >
+                                <div class="modal-dialog" style="">
+                                    <div class="modal-content" >
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="up_biao()">&times;</button>
+                                            <h3 class="smaller lighter blue no-margin"><div id="h3text">正在加载</div></h3>
+                                        </div>
+
+                                        <div class="modal-body" id="adddiv">
+                                            <input id="id" name="id" type="hidden" value="4"  maxlength="" placeholder=""> 
+                                            <label class="block clearfix">
+                                                <span class="block input-icon input-icon-right">
+                                                name <input type="text" id="name" class="" placeholder="名称">
+                                                </span>
+                                            </label> 
+                                            <label class="block clearfix">
+                                                <span class="block input-icon input-icon-right">
+                                                type <input type="text" id="type" class="" placeholder="tcp,udp">
+                                                </span>
+                                            </label> 
+                                            <label class="block clearfix">
+                                                <span class="block input-icon input-icon-right">
+                                                local_ip <input type="text" id="local_ip" class="" placeholder="本地服务器地址,如127.0.0.1">
+                                                </span>
+                                            </label> 
+                                            <label class="block clearfix">
+                                                <span class="block input-icon input-icon-right">
+                                                local_port <input type="text" id="local_port" class="" placeholder="本地服务器端口,如8888">
+                                                </span>
+                                            </label>   
+                                            <label class="block clearfix">
+                                                <span class="block input-icon input-icon-right">
+                                                remote_port <input type="text" id="remote_port" class="" placeholder="远程开放端口,如6000">
+                                                </span>
+                                            </label>  
+                                        </div>
+
+                                        <div class="modal-footer">
+                                            <button class="btn btn-sm btn-success pull-right" data-dismiss="modal" onclick="addpost()">
+                                                <i class="ace-icon fa fa-check"></i>
+                                                确认
+                                            </button>
+                                            <button class="btn btn-sm btn-danger pull-right" data-dismiss="modal" onclick="up_biao()">
+                                                <i class="ace-icon fa fa-times"></i>
+                                                取消
+                                            </button>
+                                        </div>
+                                    </div><!-- /.modal-content -->
+                                </div><!-- /.modal-dialog -->
+                            </div>
                     </div><!-- /.row -->
                 </div><!-- /.page-content -->
             </div>
@@ -302,26 +505,87 @@
             if(hei > 250){
                 document.getElementById('tab3n').style.height = hei - 250 + 'px';
             }
-            var rul = catrul("frpc/logs?");
-            document.getElementById('tab3n').innerHTML = '<iframe src="' + rul + '" width="100%" height="100%"></iframe>	';
+            var rul = catrul("main/tty?") + "&sw=/frpc/logs&bash=logs";
+            document.getElementById('logs').src = rul;
             
         }
-        function up_post(data){
-            if (data == "start"){
-                const Http = new XMLHttpRequest();
-                var rul = catrul("frpc/api?");
-                Http.open("GET",rul + '&type=start');
-                Http.send();
-                Http.onreadystatechange = (e) => {
-                    if(Http.readyState == 4 && Http.status == 200){
-                        if (Http.status == 200) {
-                            cathttp = Http.responseText;
-                            if (cathttp.substr(0, 1) == "<") {
-                                location.reload();
-                            } else {
+        function add(){
+            document.getElementById('h3text').innerHTML  = "add";
+            document.getElementById('name').disabled  = false;
+            document.getElementById('name').value  = "";
+            document.getElementById('type').value  = "";
+            document.getElementById('local_ip').value  = "";
+            document.getElementById('local_port').value  = "";
+            document.getElementById('remote_port').value  = "";
+        }
+        function del(name){
+            bootbox.confirm("确认删除 " + name, function (result) {
+                if(result){
+                    var reg = new RegExp("(^|&)" + "link" + "=([^&]*)(&|$)", "i");
+                    var r = window.location.search.substr(1).match(reg);
+                    if (r == null){
+                        r = ['127.0.0.1','127.0.0.1','127.0.0.1'];
+                    }
+                    const Http = new XMLHttpRequest();
+                    var rul = catrul("frpc/api?");
+                    Http.open("GET",rul + '&type=del' + '&name=' + name);
+                    Http.send();
+                    Http.onreadystatechange = (e) => {
+                        if(Http.readyState == 4 && Http.status == 200){
+                            if (Http.status == 200) {
+                                cathttp = Http.responseText;
+                                if (cathttp.substr(0, 1) == "<") {
+                                    location.reload();
+                                } else {
+                                        var data = JSON.parse(cathttp); 
+                                        if (data.data == 'ERROR'){
+                                            var rul = catrul("main/tty?") + "&sw=/frpc/logs&bash=com";
+                                            bootbox.confirm(data.data + '<iframe src="' + rul + '" width="100%" height="100%"></iframe>	', function (result) {
+
+                                            })
+                                        }else{
+                                            
+                                            bootbox.confirm(data.data, function (result) {
+
+                                            })
+                                        }
+                                        up_biao();
+                                        var rul = catrul("main/tty?") + "&sw=/frpc/logs&bash=logs";
+                                        document.getElementById('logs').src = rul;
+                                    }
+                            }
+                        }
+                    }
+                }
+            })
+        }
+        function addpost(){
+            var reg = new RegExp("(^|&)" + "link" + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r == null){
+                r = ['127.0.0.1','127.0.0.1','127.0.0.1'];
+            }
+            edit = document.getElementById('h3text').innerHTML;
+            name = document.getElementById('name').value;
+            id = document.getElementById('id').value;
+            type = document.getElementById('type').value;
+            local_ip = document.getElementById('local_ip').value;
+            local_port = document.getElementById('local_port').value;
+            remote_port = document.getElementById('remote_port').value;
+            const Http = new XMLHttpRequest();
+            var rul = catrul("frpc/api?");
+            Http.open("GET",rul + '&id=' + id + '&type=' + edit + '&name=' + name + '&types=' + type + '&local_ip=' + local_ip + '&local_port=' + local_port + '&remote_port=' + remote_port);
+            Http.send();
+            Http.onreadystatechange = (e) => {
+                if(Http.readyState == 4 && Http.status == 200){
+                    if (Http.status == 200) {
+                        cathttp = Http.responseText;
+                        if (cathttp.substr(0, 1) == "<") {
+                            location.reload();
+                        } else {
                                 var data = JSON.parse(cathttp); 
                                 if (data.data == 'ERROR'){
-                                    var rul = catrul("frpc/logs?");
+                                    var rul = catrul("main/tty?") + "&sw=/frpc/logs&bash=com";
                                     bootbox.confirm(data.data + '<iframe src="' + rul + '" width="100%" height="100%"></iframe>	', function (result) {
 
                                     })
@@ -332,15 +596,277 @@
                                     })
                                 }
                                 up_biao();
-                                var rul = catrul("frpc/logs?");
-                                document.getElementById('tab3n').innerHTML = '<iframe src="' + rul + '" width="100%" height="100%"></iframe>	';
+                                var rul = catrul("main/tty?") + "&sw=/frpc/logs&bash=logs";
+                                document.getElementById('logs').src = rul;
+                            }
+                    }
+                }
+            }
+        }
+        function edit(name){
+            document.getElementById('name').disabled  = true;
+            document.getElementById('name').value  = name;
+            document.getElementById('id').value  = name;
+            document.getElementById('type').disabled  = true;
+            document.getElementById('local_ip').disabled  = true;
+            document.getElementById('local_port').disabled  = true;
+            document.getElementById('remote_port').disabled  = true;
+            var reg = new RegExp("(^|&)" + "link" + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r == null){
+                r = ['127.0.0.1','127.0.0.1','127.0.0.1'];
+            }
+            const Http = new XMLHttpRequest();
+            var rul = catrul("frpc/api?");
+            Http.open("GET",rul + '&type=run');
+            Http.send();
+            Http.onreadystatechange = (e) => {
+                if(Http.readyState == 4 && Http.status == 200){
+                    if (Http.status == 200) {
+                        cathttp = Http.responseText;
+                        if (cathttp.substr(0, 1) == "<") {
+                            location.reload();
+                        } else {
+                            var data = JSON.parse(cathttp);
+                            var reg = "";
+                            var link = "";
+                            for (i = 0; i < data.datafo; i++) {
+                                if (data.data[i].name == document.getElementById('name').value)
+                                document.getElementById('h3text').innerHTML  = "edit";
+                                document.getElementById('name').value  = data.data[i].name;
+                                document.getElementById('type').value  = data.data[i].type;;
+                                document.getElementById('local_ip').value  = data.data[i].local_ip;;
+                                document.getElementById('local_port').value  = data.data[i].local_port;;
+                                document.getElementById('remote_port').value  = data.data[i].remote_port;;
+                                document.getElementById('name').disabled  = false;
+                                document.getElementById('type').disabled  = false;
+                                document.getElementById('local_ip').disabled  = false;
+                                document.getElementById('local_port').disabled  = false;
+                                document.getElementById('remote_port').disabled  = false;
                             }
                         }
                     }
                 }
             }
         }
+        function up_post(data){
+            if (data == "start"){
+                document.getElementById('start').disabled  = true;
+                const Http = new XMLHttpRequest();
+                var rul = catrul("frpc/api?");
+                Http.open("GET",rul + '&type=start');
+                Http.send();
+                Http.onreadystatechange = (e) => {
+                    if(Http.readyState == 4 && Http.status == 200){
+                        document.getElementById('start').disabled  = false;
+                        if (Http.status == 200) {
+                            cathttp = Http.responseText;
+                            if (cathttp.substr(0, 1) == "<") {
+                                location.reload();
+                            } else {
+                                var data = JSON.parse(cathttp); 
+                                if (data.data == 'ERROR'){
+                                    var rul = catrul("main/tty?") + "&sw=/frpc/logs&bash=logs";
+                                    bootbox.confirm(data.data + '<iframe src="' + rul + '" width="100%" height="100%"></iframe>	', function (result) {
+
+                                    })
+                                }else{
+                                    
+                                    bootbox.confirm(data.data, function (result) {
+
+                                    })
+                                }
+                                up_biao();
+                                var rul = catrul("main/tty?") + "&sw=/frpc/logs&bash=logs";
+                                document.getElementById('logs').src = rul;
+                            }
+                        }
+                    }
+                }
+            }else if (data == "stop"){
+                document.getElementById('start').disabled  = true;
+                const Http = new XMLHttpRequest();
+                var rul = catrul("frpc/api?");
+                Http.open("GET",rul + '&type=stop');
+                Http.send();
+                Http.onreadystatechange = (e) => {
+                    if(Http.readyState == 4 && Http.status == 200){
+                        document.getElementById('start').disabled  = false;
+                        if (Http.status == 200) {
+                            cathttp = Http.responseText;
+                            if (cathttp.substr(0, 1) == "<") {
+                                location.reload();
+                            } else {
+                                var data = JSON.parse(cathttp); 
+                                if (data.data == 'ERROR'){
+                                    var rul = catrul("main/tty?") + "&sw=/frpc/logs&bash=logs";
+                                    bootbox.confirm(data.data + '<iframe src="' + rul + '" width="100%" height="100%"></iframe>	', function (result) {
+
+                                    })
+                                }else{
+                                    
+                                    bootbox.confirm(data.data, function (result) {
+
+                                    })
+                                }
+                                up_biao();
+                                var rul = catrul("main/tty?") + "&sw=/frpc/logs&bash=logs";
+                                document.getElementById('logs').src = rul;
+                            }
+                        }
+                    }
+                }
+            }else if (data == "booton"){
+                //document.getElementById('start').disabled  = true;
+                const Http = new XMLHttpRequest();
+                var rul = catrul("frpc/api?");
+                Http.open("GET",rul + '&type=booton');
+                Http.send();
+                Http.onreadystatechange = (e) => {
+                    if(Http.readyState == 4 && Http.status == 200){
+                        //document.getElementById('start').disabled  = false;
+                        if (Http.status == 200) {
+                            cathttp = Http.responseText;
+                            if (cathttp.substr(0, 1) == "<") {
+                                location.reload();
+                            } else {
+                                var data = JSON.parse(cathttp); 
+                                if (data.data == 'ERROR'){
+                                    var rul = catrul("main/tty?") + "&sw=/frpc/logs&bash=logs";
+                                    bootbox.confirm(data.data + '<iframe src="' + rul + '" width="100%" height="100%"></iframe>	', function (result) {
+
+                                    })
+                                }else{
+                                    
+                                    bootbox.confirm(data.data, function (result) {
+
+                                    })
+                                }
+                                up_biao();
+                                var rul = catrul("main/tty?") + "&sw=/frpc/logs&bash=logs";
+                                document.getElementById('logs').src = rul;
+                            }
+                        }
+                    }
+                }
+            }else if (data == "bootoff"){
+                //document.getElementById('start').disabled  = true;
+                const Http = new XMLHttpRequest();
+                var rul = catrul("frpc/api?");
+                Http.open("GET",rul + '&type=bootoff');
+                Http.send();
+                Http.onreadystatechange = (e) => {
+                    if(Http.readyState == 4 && Http.status == 200){
+                        //document.getElementById('start').disabled  = false;
+                        if (Http.status == 200) {
+                            cathttp = Http.responseText;
+                            if (cathttp.substr(0, 1) == "<") {
+                                location.reload();
+                            } else {
+                                var data = JSON.parse(cathttp); 
+                                if (data.data == 'ERROR'){
+                                    var rul = catrul("main/tty?") + "&sw=/frpc/logs&bash=logs";
+                                    bootbox.confirm(data.data + '<iframe src="' + rul + '" width="100%" height="100%"></iframe>	', function (result) {
+
+                                    })
+                                }else{
+                                    
+                                    bootbox.confirm(data.data, function (result) {
+
+                                    })
+                                }
+                                up_biao();
+                                var rul = catrul("main/tty?") + "&sw=/frpc/logs&bash=logs";
+                                document.getElementById('logs').src = rul;
+                            }
+                        }
+                    }
+                }
+            }else if (data == "server"){
+                //document.getElementById('start').disabled  = true;
+                const Http = new XMLHttpRequest();
+                var rul = catrul("frpc/api?");
+                server = document.getElementById('server').value;
+                port = document.getElementById('port').value;
+                token = document.getElementById('token').value;
+                Http.open("GET",rul + '&type=server&server=' + server + "&port=" + port + "&tocken=" + token);
+                Http.send();
+                Http.onreadystatechange = (e) => {
+                    if(Http.readyState == 4 && Http.status == 200){
+                        //document.getElementById('start').disabled  = false;
+                        if (Http.status == 200) {
+                            cathttp = Http.responseText;
+                            if (cathttp.substr(0, 1) == "<") {
+                                location.reload();
+                            } else {
+                                var data = JSON.parse(cathttp); 
+                                if (data.data == 'ERROR'){
+                                    var rul = catrul("main/tty?") + "&sw=/frpc/logs&bash=com";
+                                    bootbox.confirm(data.data + '<iframe src="' + rul + '" width="100%" height="100%"></iframe>	', function (result) {
+
+                                    })
+                                }else{
+                                    
+                                    bootbox.confirm(data.data, function (result) {
+
+                                    })
+                                }
+                                up_biao();
+                                var rul = catrul("main/tty?") + "&sw=/frpc/logs&bash=logs";
+                                document.getElementById('logs').src = rul;
+                            }
+                        }
+                    }
+                }
+            }else if (data == "web"){
+                //document.getElementById('start').disabled  = true;
+                const Http = new XMLHttpRequest();
+                var rul = catrul("frpc/api?");
+                admin_addr = document.getElementById('admin_addr').value;
+                admin_port = document.getElementById('admin_port').value;
+                admin_user = document.getElementById('admin_user').value;
+                admin_pwd = document.getElementById('admin_pwd').value;
+                Http.open("GET",rul + '&type=web&admin_addr=' + admin_addr + "&admin_port=" + admin_port + "&admin_user=" + admin_user + "&admin_pwd=" + admin_pwd);
+                Http.send();
+                Http.onreadystatechange = (e) => {
+                    if(Http.readyState == 4 && Http.status == 200){
+                        //document.getElementById('start').disabled  = false;
+                        if (Http.status == 200) {
+                            cathttp = Http.responseText;
+                            if (cathttp.substr(0, 1) == "<") {
+                                location.reload();
+                            } else {
+                                var data = JSON.parse(cathttp); 
+                                if (data.data == 'ERROR'){
+                                    var rul = catrul("main/tty?") + "&sw=/frpc/logs&bash=com";
+                                    bootbox.confirm(data.data + '<iframe src="' + rul + '" width="100%" height="100%"></iframe>	', function (result) {
+
+                                    })
+                                }else{
+                                    
+                                    bootbox.confirm(data.data, function (result) {
+
+                                    })
+                                }
+                                up_biao();
+                                var rul = catrul("main/tty?") + "&sw=/frpc/logs&bash=logs";
+                                document.getElementById('logs').src = rul;
+                            }
+                        }
+                    }
+                }
+            }else{
+                bootbox.confirm('没写 data: ' + data, function (result) {
+
+                })
+            }
+        }
         function up_biao() {
+            var reg = new RegExp("(^|&)" + "link" + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r == null){
+                r = ['127.0.0.1','127.0.0.1','127.0.0.1'];
+            }
             const Http = new XMLHttpRequest();
             var rul = catrul("frpc/api?");
             Http.open("GET",rul + '&type=run');
@@ -357,24 +883,74 @@
                                 str = '<p>\
                                         <button class="btn " onclick="window.open(\'http://\' + window.location.hostname + \':8080\');return false;;return false;">在新窗口打开</button> .\
                                     </p>';
-                                document.getElementById('tab1n').innerHTML = str;
-                                str = '<p>\
-                                        <button class="btn " onclick="up_post("stop");return false;">停止程序</button> \
-                                    </p>';
-                                document.getElementById('tab2n').innerHTML = str;
+                                //document.getElementById('tab1n').innerHTML = str;
+                                
+                                document.getElementById('start').innerHTML  = "停止程序";
+                                document.getElementById('start').onclick  = function(){up_post('stop');};
                             }else{
                                 str = '<p>\
                                         <button class="btn " onclick="up_biao();return false;">未在运行,点击刷新</button> \
                                     </p>';
-                                document.getElementById('tab1n').innerHTML = str;
-                                str = '<p>\
-                                        <button class="btn " onclick="up_post(\'start\');return false;">启动程序</button> \
-                                    </p>';
-                                document.getElementById('tab2n').innerHTML = str;
+                                //document.getElementById('tab1n').innerHTML = str;
                                 
+                                document.getElementById('start').innerHTML  = "启动程序";
+                                document.getElementById('start').onclick  = function(){up_post('start');};
+                            }
+                            if (data.boot == "yes"){
+                                document.getElementById('boot').innerHTML  = "自启:开启";
+                                document.getElementById('boot').onclick  = function(){up_post('bootoff');};
+                            }else{
+                                document.getElementById('boot').innerHTML  = "自启:关闭";
+                                document.getElementById('boot').onclick  = function(){up_post('booton');};
                             }
                             
-                            
+                            document.getElementById('server').value  = data.common.server_addr;
+                            document.getElementById('port').value  = data.common.server_port;
+                            document.getElementById('token').value  = data.common.token;
+                            document.getElementById('admin_addr').value  = data.common.admin_addr;
+                            document.getElementById('admin_port').value  = data.common.admin_port;
+                            document.getElementById('admin_user').value  = data.common.admin_user;
+                            document.getElementById('admin_pwd').value  = data.common.admin_pwd;
+
+                            var reg = "";
+                            var link = "";
+                            for (i = 0; i < data.datafo; i++) {
+                                servername = data.data[i].name
+                                servername = servername.replace('.', '_')
+                                servername = servername.replace('.', '_')
+                                servername = servername.replace('.', '_')
+                                servername = servername.replace('.', '_')
+                                reg = reg + '<tr>';
+                                reg = reg + '<td class="center">';
+                                reg = reg + '<label class="pos-rel">';
+                                reg = reg + '<input type="checkbox" class="ace" />';
+                                reg = reg + '<span class="lbl"></span>';
+                                reg = reg + '</label>';
+                                reg = reg + '</td>';
+                                reg = reg + '<td>';
+                                reg = reg + '<a href="' + '' + 'api?link=' + r[2] + '" id="' + servername + "mini" + '">' + data.data[i].name + '</a>';
+                                reg = reg + '</td>';
+                                reg = reg + '<td id="' + servername + "info" + '">';
+                                reg = reg + data.data[i].local_ip + ":" + data.data[i].local_port;
+                                reg = reg + '</td>';
+                                reg = reg + '<td id="' + servername + "info" + '">';
+                                reg = reg + data.data[i].remote_port;
+                                reg = reg + '</td>';
+                                reg = reg + '<td id="' + servername + "info" + '">';
+                                reg = reg + data.data[i].run;
+                                reg = reg + '</td>';
+                                reg = reg + '<td>\
+                                                <button class="btn btn-xs btn-success" data-toggle="modal" data-target="#my-modal" onclick="edit(\'' + data.data[i].name + '\');">\
+                                                    <!--i class="ace-icon fa fa-download bigger-120"></i-->修改\
+                                                </button>\
+                                                <button class="btn btn-xs btn-danger" data-toggle="modal" onclick="del(\'' + data.data[i].name + '\');">\
+                                                    <!--i class="ace-icon fa fa-download bigger-120"></i-->删除\
+                                                </button>\
+                                        </td >';
+                                reg = reg + '</tr>';
+                                reg = reg + '';
+                            }
+                            document.getElementById("biaoinfo").innerHTML = reg;
                         }
                     }
                 }
