@@ -57,10 +57,17 @@ def websockfs(new_client_socket,data):
         data = data.decode("utf-8")
         cd = 0
         while cd != len(data):
-            websockfs(new_client_socket,data[cd:cd + 100].encode("utf-8"))
             if len(data) < (cd + 100):
+                if cd == 0:
+                    websockfs(new_client_socket,data[cd:cd + 100].encode("utf-8"))
+                else:
+                    websockfs(new_client_socket,b'0' + data[cd:cd + 100].encode("utf-8"))
                 cd = len(data)
             else:
+                if cd == 0:
+                    websockfs(new_client_socket,data[cd:cd + 100].encode("utf-8"))
+                else:
+                    websockfs(new_client_socket,b'0' + data[cd:cd + 100].encode("utf-8"))
                 cd = cd + 100
     else:
         datab = b'12'
@@ -73,7 +80,8 @@ def websockfs(new_client_socket,data):
             new_client_socket.send(datab)
             new_client_socket.send(data)
 def websockend(new_client_socket,data):
-    data = b'' + data
+    #websockfs(new_client_socket,b'2{"d":"disableLeaveAlert"}')
+    data = b'0' + data
     if len(data.decode("utf-8")) > 101:
         data = data.decode("utf-8")
         cd = 0
@@ -86,13 +94,29 @@ def websockend(new_client_socket,data):
     else:
         datab = b'12'
         if len(data) < 126:
-            datab = bytes.fromhex('88')
+            datab = bytes.fromhex('82')
+            #datab += bytes.fromhex('03')
+            #datab += bytes.fromhex('30')
+            #datab += bytes.fromhex('0D')
+            #datab += bytes.fromhex('0A')
             len_ = hex(len(data))[2:]
             if len(len_) == 1:
                 len_ = '0' + len_
             datab += bytes.fromhex(len_)
             new_client_socket.send(datab)
             new_client_socket.send(data)
+            datab = bytes.fromhex('88')
+            datab += bytes.fromhex('02')
+            datab += bytes.fromhex('03')
+            datab += bytes.fromhex('E8')
+            new_client_socket.send(datab)
+    time.sleep(0.05)
+def websocktime(new_client_socket):
+    datab = bytes.fromhex('89')
+    datab += bytes.fromhex('00')
+    new_client_socket.send(datab)
+    time.sleep(0.2)
+    return websockrx(new_client_socket)
 
 def websockinit(new_client_socket,Headers,info):
     Sec_WebSocket_Magic = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11'
@@ -125,6 +149,9 @@ def websockinit(new_client_socket,Headers,info):
     he = he + '\r\n'
     he = "HTTP/1.1 101 Switching Protocols \r\n" + he
     new_client_socket.send(he.encode("utf-8"))
+    if SecWebSocketProtocol != '':
+        #time.sleep(0.5)
+        websockfs(new_client_socket,b"2{ }")
 
 def http_to_char(data):
     rul_ = data.split('%')
@@ -158,41 +185,113 @@ def catHeaders(data,Headers):
             return h[len(tmp2[0] + " "):]
     return ''
 
-def catCookie(data,Headers):
+def catCookie(data,Headers,session_):
+    res = ""
     for h in Headers:
         tmp2 = h.split(' ')
         if tmp2[0] == "Cookie:":
             for x in range(0,len(tmp2)):
                 tmp3 = tmp2[x].split('=')
                 if(tmp3[0] == data):
-                    return tmp3[1]
-    return ""
+                    if session_ == '':
+                        res = tmp3[1].split(';')[0]
+                    else:
+                        for s in session_:
+                            if s.split(",")[0] == tmp3[1].split(';')[0]:
+                                res = tmp3[1].split(';')[0]
+    return res
 
 def tcplink(sock, addr , logs, info,void):
+    global run_
     new_client_socket = sock
     client_addr = addr
     RUL = ''
     HTTPMethod = ''
+    Headers = ''
+    recv_data=""
+    post_data=b''
 
     # ���տͻ��˷��͹���������
     recv_tcp = new_client_socket.recv(8192)
-    if recv_tcp:
-        if recv_tcp == b'':
-            #print(str(client_addr) + " ???")
-            recv_tcp = new_client_socket.recv(8192)
-            if recv_tcp == b'':
-                #print(str(client_addr) + " ???")
-                return 0
-    else:
-        return 0
-    recv_data=""
-    post_data=b''
-    Headers = ''
-    recv_data = recv_tcp.split(b'\r\n\r\n')
-    haslen = len(recv_data[0]) + 4
-    post_data = recv_tcp[haslen:]
-    recv_data = recv_data[0].decode("utf-8")
-    Headers = recv_data.split('\r\n')
+    while True:
+        if recv_tcp:
+            l = recv_tcp.split(b'\r\n\r\n')
+            l = len(l) 
+            if recv_tcp[:4] == b'POST':
+                if l > 1:
+                    os.system("./error.sh '" + "POST" + "'")
+                    recv_data = recv_tcp.split(b'\r\n\r\n')
+                    Headers = recv_data[0].decode("utf-8")
+                    Headers = Headers.split('\r\n')
+                    os.system("./error.sh '" + catHeaders("Content-Type",Headers) + "'")
+                    if catHeaders("Content-Type",Headers)[:len("application/x-www-form-urlencoded")] == "application/x-www-form-urlencoded":
+                        os.system("./error.sh '" + catHeaders("Transfer-Encoding",Headers) + "'")
+                        if catHeaders("Transfer-Encoding",Headers)[:len("Transfer-Encoding")] == "chunked":
+                            recv_data = recv_tcp.split(b'\r\n\r\n')
+                            haslen = len(recv_data[0]) + 4
+                            post_data = recv_tcp[haslen:]
+                            os.system("./info.sh '" + post_data.decode("utf-8") + "'")
+                            os.system("./info.sh '" + recv_tcp.decode("utf-8") + "'")
+                            if post_data[-5:] == b'0\r\n\r\n':
+                                os.system("./error.sh '" + "ENDTO" + "'")
+                                if os.path.exists("error.sh"):
+                                    try:
+                                        os.system("./error.sh '" + post_data.decode("utf-8") + "'")
+                                    except Exception as e:
+                                        print()
+
+                                print(post_data)
+                                post_data = post_data.split(b'\r\n')
+                                print(post_data)
+                                post_data = post_data[1]
+                                if os.path.exists("error.sh"):
+                                    try:
+                                        os.system("./info.sh '" + post_data.decode("utf-8") + "'")
+                                    except Exception as e:
+                                        print()
+
+                                break
+                            recv_tcp += new_client_socket.recv(8192)
+                        else:
+                            recv_data = recv_tcp.split(b'\r\n\r\n')
+                            haslen = len(recv_data[0]) + 4
+                            post_data = recv_tcp[haslen:]
+                            recv_data = recv_data[0].decode("utf-8")
+                            Headers = recv_data.split('\r\n')
+                            break
+                    else:
+                        recv_data = recv_tcp.split(b'\r\n\r\n')
+                        haslen = len(recv_data[0]) + 4
+                        post_data = recv_tcp[haslen:]
+                        recv_data = recv_data[0].decode("utf-8")
+                        Headers = recv_data.split('\r\n')
+                        break
+
+
+#36\r\n
+#name=admin password=admin type=username checkbox=false
+#\r\n0\r\n\r\n
+                else:
+                    recv_tcp += new_client_socket.recv(8192)
+            else:
+                if l > 1:
+                    recv_data = recv_tcp.split(b'\r\n\r\n')
+                    haslen = len(recv_data[0]) + 4
+                    post_data = recv_tcp[haslen:]
+                    recv_data = recv_data[0].decode("utf-8")
+                    Headers = recv_data.split('\r\n')
+                    break
+                else:
+                    #if recv_tcp == b'':
+                        #print(str(client_addr) + " ???")
+                        recv_tcp += new_client_socket.recv(8192)
+                    #    if recv_tcp == b'':
+                            #print(str(client_addr) + " ???")
+                    #        return 0
+        else:
+            return 0
+    
+    
     RUL = ''
     RUL_CS = ''
     RUL = Headers[0].split(' ')[1].split('?')[0].split('#')[0]
@@ -204,12 +303,15 @@ def tcplink(sock, addr , logs, info,void):
         RUL_CS = http_to_char(RUL_CS[1])
     pr = (time.strftime("I %Y-%m-%d %H:%M:%S ", time.localtime()).encode("utf-8"))
     pr += ((str(client_addr) + ' ' + '' + Headers[0].split(' ')[1]).encode("utf-8"))
-    logs("info",info,pr)
+    logs("info",info,pr + b"\r\n")
     data = void(new_client_socket,RUL,RUL_CS,post_data,Headers,logs,info)
+    if data != 0:
+        run_ = data
     new_client_socket.close()
     return data
 
 def server(tcp_server_socket,info,logs,void):
+    global run_
     run_ = 1
     while run_ > -1:
         try:
@@ -220,7 +322,9 @@ def server(tcp_server_socket,info,logs,void):
                     sock, addr = tcp_server_socket.accept()
                     sock.settimeout(60)
                     if info['debug']:
-                        run_ = tcplink(sock, addr , logs, info,void)
+                        run__ = tcplink(sock, addr , logs, info,void)
+                        if run__ != 0:
+                            run_ = run__
                     else:
                         t = threading.Thread(target=tcplink, args=(sock, addr , logs, info,void))
                         t.start()
