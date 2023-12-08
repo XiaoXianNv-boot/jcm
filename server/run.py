@@ -80,8 +80,9 @@ def httpserver_void(new_client_socket,RUL,RUL_CS,post_data,Headers,logs,info):
     httpserver = imp.load_source("server/main/httpserver.py","server/main/httpserver.py")
     try:
         data = httpserver.catHeaders("Cookie",Headers)
-        data = httpserver.catCookie("Cluster_management_Jiang",Headers)
-        print()
+        #print(data)
+        data = httpserver.catCookie("Cluster_management_Jiang",Headers,session_.split('\n'))
+        #print(data)
         user = ""
         tmp4 = session_.split('\n')
         for y in range(len(tmp4)):
@@ -165,6 +166,10 @@ def httpserver_void(new_client_socket,RUL,RUL_CS,post_data,Headers,logs,info):
                         
                 if RUL[:len("/assets")] != "/assets":
                     RUL = "/login.html"
+                    for h in Headers:
+                        if h == 'Connection: Upgrade':
+                            httpserver.websockinit(new_client_socket,Headers,info)
+                            httpserver.websockend(new_client_socket,b"No Login\r\n")
                     ma = "401"
                 RUL = "./web/" + info["theme"] + RUL
                 httpserver.httppostfile(new_client_socket,ma,RUL,True,Headers,info)
@@ -271,6 +276,15 @@ def httpserver_void(new_client_socket,RUL,RUL_CS,post_data,Headers,logs,info):
                                             res += '"tx": "--KB/s",'
                                             res += '"rx": "--KB/s"'
                                             res += '}'
+                                    elif cat =="401":
+                                        res += '"api": "3",'
+                                        res += '"safe": "--",'
+                                        res += '"cpu": "--",'
+                                        res += '"ram": "--",'
+                                        res += '"rom": "--",'
+                                        res += '"tx": "--KB/s",'
+                                        res += '"rx": "--KB/s"'
+                                        res += '}'
                                     else:
                                         data = os.popen('ping ' + ii[7] + ' -c 1 | grep icmp_seq').read()
                                         if len(data.split('icmp_seq=1 ttl=64')) == 2:
@@ -351,10 +365,47 @@ def httpserver_void(new_client_socket,RUL,RUL_CS,post_data,Headers,logs,info):
 def shutdown(data):
     global exre
     exre = data
+    logsprnt("info","info",data)
 
+def logsprnts(live,info,data):
+    import threading
+    lock = threading.Lock()
+    lock.acquire()
+    #if len(sys.argv) == 5:
+    #    if sys.argv[1] == "hass":
+    #        os.system("bashio::log." + live + " " + data.decode("utf-8"))
+    #    else:
+    #        print(live,end=' ')
+    #        print(data,end='\r')
+    #else:
+    try:
+        if data[-2:] == b'\r\n':
+            data = data[:-2]
+    except Exception as e:
+        print()
+    if live == "info":
+        if os.path.exists("info.sh"):
+            try:
+                os.system("./info.sh '" + data.decode("utf-8") + "'")
+            except Exception as e:
+                print()
+
+        print("\033[32m " + live,end=' ')
+        print(data,end='')
+        print('\033[0m')
+    else:
+        if os.path.exists("error.sh"):
+            try:
+                os.system("./error.sh '" + data.decode("utf-8") + "'")
+            except Exception as e:
+                print()
+        print(live,end=' ')
+        print(data,end='')
+        print('')
+    lock.release()
 def logsprnt(live,info,data):
-    print(live,end=' ')
-    print(data,end='\r')
+    t = threading.Thread(target=logsprnts, args=(live,info,data))
+    t.start()
 
 def main(info):
     global sent_before
@@ -362,6 +413,7 @@ def main(info):
     global ttime
     global session_
     global exre
+    global res
 
     exre = ''
 
@@ -413,8 +465,8 @@ def main(info):
             ssl_port = tcp_server_socket_ssl.getsockname()
             tcp_server_socket_ssl.listen(100)
             tcp_server_socket_run = tcp_server_socket_ssl
-            t = threading.Thread(target=tcptossl, args=(tcp_server_socket,ssl_port))
-            t.start()
+            #t = threading.Thread(target=tcptossl, args=(tcp_server_socket,ssl_port))
+            #t.start()
             #tcptossl(tcp_server_socket,ssl_port)
         except Exception as e:
             print(e.args)
@@ -423,4 +475,6 @@ def main(info):
     httpserver = imp.load_source("server/main/httpserver.py","server/main/httpserver.py")
     res = httpserver.server(tcp_server_socket_run,info,logsprnt,httpserver_void)
     if res == -9:
-        main(info)
+        tcp_server_socket.close()
+        run = imp.load_source('run',"server/run.py")
+        run.main(info)
