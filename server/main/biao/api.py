@@ -76,7 +76,7 @@ def main(new_client_socket,post,Headers,info,user):
                     if info['debug']:
                         print(md)
                         print(b)
-                    cat,cdata = Client(ii[7],int(ii[19]),'/login/dev','a=' + a + '&b=' + b)
+                    cat,cdata = sh.Client(ii[7],int(ii[19]),'/login/dev','a=' + a + '&b=' + b)
                     if cat == '200':
                         cdata = cdata.decode("utf-8")
                         if cdata == '{"data":"login"}\r\n\r\n':
@@ -96,7 +96,19 @@ def main(new_client_socket,post,Headers,info,user):
                         else:
                             cdata = cdata.split('":"')
                             cdata = cdata[1].split('","')
-
+                    else:
+                        if cat == "404":
+                            res += '{\n    "name":"404",\n    "link":"",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
+                        elif cat == '502':
+                            res += '{\n    "name":"无响应",\n    "link":"",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
+                        elif cat == '401':
+                            res += '{\n    "name":"登录失败",\n    "link":"",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
+                        elif cdata == '<!DOCTYPE html>':
+                            res += '{\n    "name":"响应错误",\n    "link":"",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
+                        else:
+                            cdata = cdata.decode("utf-8")[9:]
+                            res += cdata
+                            res += '{}]} \r\n'
                 elif cdata == '<!DOCTYPE html>':
                     res += '{\n    "name":"响应错误",\n    "link":"",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
                 else:
