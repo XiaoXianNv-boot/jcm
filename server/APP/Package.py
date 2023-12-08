@@ -7,6 +7,7 @@ import os
 import sys
 
 name = "APP"
+Version = "V0.2"
 
 def install(new_client_socket,post,Versino,Headers,info,prin):
     pkg=""
@@ -19,13 +20,13 @@ def install(new_client_socket,post,Versino,Headers,info,prin):
     for i in pkg:
         if i.split('\r')[0] == name:
             inpkg = ""
-    prin(new_client_socket,("install " + name + " V0.2\n\r").encode("utf-8"))       
-    os.system("cp -rf .out/" + name + "_V0.2.pkg/.out/* ./")
+    prin(new_client_socket,("install " + name + " " + Version + "\n\r").encode("utf-8"))       
+    os.system("cp -rf .out/" + name + "_" + Version + ".pkg/.out/* ./")
     
     if inpkg == "install":
         os.system("echo " + name + ">>server/server.ini")
 #    prin(new_client_socket,("END\n\r").encode("utf-8"))  
-    os.system("rm -rf .out/" + name + "_V0.2.pkg")
+    os.system("rm -rf .out/" + name + "_" + Version + ".pkg")
 def remove():
     os.system("rm -rf server/" + name)
     os.system("rm -rf web/" + name)
@@ -49,7 +50,7 @@ def rm(dir,name):
 def info():
     print("Package:" + name)
     print("name:应用商店")
-    print("Version:V0.2")
+    print("Version:" + Version)
     print("Depends:main")
     print("License:GPL-2.0")
     print("Description:软件的应用商店")
