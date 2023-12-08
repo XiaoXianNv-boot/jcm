@@ -201,26 +201,26 @@
                                 </div><!-- /.span -->
                             </div><!-- /.row -->
                             <div id="my-modal" class="modal fade" tabindex="-1" data-backdrop=false >
-                    <div class="modal-dialog" style="width: 100%; height: 908px;">
-                        <div class="modal-content" >
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="up_biao()">&times;</button>
-                                <h3 class="smaller lighter blue no-margin"><div id="h3text">update</div></h3>
-                            </div>
+                                <div class="modal-dialog" style="width: 100%; height: 908px;">
+                                    <div class="modal-content" >
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="up_biao()">&times;</button>
+                                            <h3 class="smaller lighter blue no-margin"><div id="h3text">update</div></h3>
+                                        </div>
 
-                            <div class="modal-body">
-                                <iframe id="tty" src="/?" width="100%" height="500"></iframe>
-                            </div>
+                                        <div class="modal-body">
+                                            <iframe id="tty" src="/?" width="100%" height="500"></iframe>
+                                        </div>
 
-                            <div class="modal-footer">
-                                <button class="btn btn-sm btn-danger pull-right" data-dismiss="modal" onclick="up_biao()">
-                                    <i class="ace-icon fa fa-times"></i>
-                                    Close
-                                </button>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-sm btn-danger pull-right" data-dismiss="modal" onclick="up_biao()">
+                                                <i class="ace-icon fa fa-times"></i>
+                                                Close
+                                            </button>
+                                        </div>
+                                    </div><!-- /.modal-content -->
+                                </div><!-- /.modal-dialog -->
                             </div>
-                        </div><!-- /.modal-content -->
-                    </div><!-- /.modal-dialog -->
-                </div>
                             <!-- PAGE CONTENT ENDS -->
                         </div><!-- /.col -->
                     </div><!-- /.row -->
