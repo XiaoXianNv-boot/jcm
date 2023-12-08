@@ -1,8 +1,8 @@
 #!/bin/bash
 
-export dir=https://jiang144.i234.me/jcm/
+export dir=https://github.com/XiaoXianNv-boot/jcm/releases/download/Preview
 
-if [ ! -e /bin/curl ]; then
+if [ ! -e /usr/bin/curl ]; then
     if [ -e /bin/apt ]; then
         apt update
         apt install -y curl
@@ -10,9 +10,13 @@ if [ ! -e /bin/curl ]; then
         if [ -e /bin/yum ]; then
             yum install -y curl
         else
-            if [ -e /bin/opkg ]; then
-                opkg update
-                opkg install -y curl
+            if [ -e /sbin/apk ]; then
+                apk add --no-cache curl
+            else
+                if [ -e /bin/opkg ]; then
+                    opkg update
+                    opkg install -y curl
+                fi
             fi
         fi
     fi
@@ -25,9 +29,13 @@ if [ ! -e /bin/python3 ]; then
         if [ -e /bin/yum ]; then
             yum install -y python3
         else
-            if [ -e /bin/opkg ]; then
-                opkg update
-                opkg install python3
+            if [ -e /sbin/apk ]; then
+                apk add --no-cache python3
+            else
+                if [ -e /bin/opkg ]; then
+                    opkg update
+                    opkg install python3
+                fi
             fi
         fi
     fi
@@ -38,14 +46,14 @@ cd jcm_install
 
 mkdir -p Tools
 cd Tools
-curl -#fL -o install.py -C - $dir/Tools/install.py
+curl -#fL -o install.py -C - $dir/install.py
 cd ..
 mkdir -p lib
 cd lib
 mkdir -p pkg
 cd pkg
-curl -#fL -o APP_V0.2.pkg -C - $dir/pkg/APP_V0.2.pkg
-curl -#fL -o main_V0.2.pkg -C - $dir/pkg/main_V0.2.pkg
+curl -#fL -o APP_V0.2.pkg -C - $dir/APP_V0.2.pkg
+curl -#fL -o main_V0.2.pkg -C - $dir/main_V0.2.pkg
 cd ..
 cd ..
 
