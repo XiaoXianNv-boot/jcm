@@ -12,6 +12,8 @@ def main(new_client_socket,post,Headers,info,user):
         sw = ''
         data = ''
         res = ''
+        httpserver = imp.load_source("server/main/httpserver.py","server/main/httpserver.py")
+        XIngressPath = httpserver.catHeaders("X-Ingress-Path",Headers)
         for i in post:
             tmp = i.split('=')
             if tmp[0] == 'link':
@@ -21,6 +23,8 @@ def main(new_client_socket,post,Headers,info,user):
             if tmp[0] == 'data':
                 data = tmp[1]
         #sw = sw + '?link=' + link + '&data=' + data
+        sw = XIngressPath + sw
+        #print(Headers)
         cd = os.stat("web/Ace_Admin/main/ttytou.html").st_size
         cd += os.stat("web/Ace_Admin/main/ttywei.html").st_size
         cd += len(sw)
