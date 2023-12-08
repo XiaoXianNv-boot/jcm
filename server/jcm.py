@@ -116,6 +116,8 @@ def dpkginstall(name):
     
 def pip(name):
     run = 1
+    if os.path.exists("info.sh"):
+        os.system("./info.sh '" + name + "'")
     print('pip ' + name)
     while run == 1:
         run = pipinstall(name,"  ")
@@ -135,7 +137,7 @@ def pipinstall(name,link):
     if shell[0] != name:
         if link[0] == 'h':
             link = ' -i ' + link
-        os.system(bin + "" + python + " -m pip install " + name + link)
+        os.system(bin + "" + python + " -m pip install --break-system-packages " + name + link)
         sh = os.popen("" + python + " -m pip list | " + bash + "grep '" + name + "'")
         shell = sh.read().split(' ')
         if shell[0] == name:
@@ -144,6 +146,8 @@ def pipinstall(name,link):
                 pr = pr + p
                 if pr == name:
                     pr = pr + ' '
+            if os.path.exists("info.sh"):
+                os.system("./info.sh '" + pr + "'")
             print(pr)
             return 0
     else:
@@ -152,6 +156,8 @@ def pipinstall(name,link):
             pr = pr + p
             if pr == name:
                 pr = pr + ' '
+        if os.path.exists("info.sh"):
+            os.system("./info.sh '" + pr + "'")
         print(pr)
         return 0
     return 1
@@ -204,6 +210,8 @@ if OS == 'Windows':
         if sh[0] == iftext["netdir"]:
             ifnet = True
     if OS == '':
+        if os.path.exists("info.sh"):
+            os.system("./info.sh '" + text["oserr"] + "'")
         print(text["oserr"])
         OS = 'Windows'
 else:
@@ -229,8 +237,20 @@ if os.path.exists(".config/main/user") == False:
     if os.path.exists(".config/main") == False:
         os.mkdir(".config/main")
     print(text["init"])
-    user = input(text["user"]).encode("utf-8")
-    password = input(text["passwor"]).encode("utf-8")
+    user = ''
+    if len(sys.argv) == 5:
+        if sys.argv[1] == "hass":
+            print(sys.argv)
+            user = sys.argv[3].encode("utf-8")
+    else:
+        user = input(text["user"]).encode("utf-8")
+    password = ''
+    if len(sys.argv) == 5:
+        if sys.argv[1] == "hass":
+            print(sys.argv)
+            password = sys.argv[4].encode("utf-8")
+    else:
+        password = input(text["passwor"]).encode("utf-8")
     tools = imp.load_source('tools',"Tools/Tools.py")
     tools.newuser(user,password,b"0")
     if OS_ == "Linux":
@@ -240,6 +260,10 @@ if os.path.exists(".config/main/port"):
     fs = open(".config/main/port", "rb")
     ini = fs.read().decode("utf-8")
     port = int(ini)
+if len(sys.argv) == 5:
+    if sys.argv[1] == "hass":
+        print(sys.argv)
+        port = int(sys.argv[2])
 file(".config/main/cookie","\n")
 file(".config/sessino","sessinon\n")
 file(".config/main/lits.json",'{"name":"'+"127.0.0.1"+'","host":"'+"127.0.0.1"+'"},' + '\n')
@@ -254,11 +278,16 @@ elif OS == "DSM":
     if os.path.exists("server/_common.py") == False:
         os.system('cp lib/_common.py ./server/')
 elif OS_ == "Linux":
-    dpkginstall("update")
-    dpkginstall(python.split('/')[-1] + "-pip ")
-    dpkginstall(python.split('/')[-1] + "-dev")
-    dpkginstall("gcc")
-    dpkginstall("curl")
+    t = 0
+    if len(sys.argv) == 5:
+        if sys.argv[1] == "hass":
+            t = 1
+    if t == 0:
+        dpkginstall("update")
+        dpkginstall(python.split('/')[-1] + "-pip ")
+        dpkginstall(python.split('/')[-1] + "-dev")
+        dpkginstall("gcc")
+        dpkginstall("curl")
     pip("psutil")
 
     OS_ = os.popen('if [ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]; then   echo "chroot"; else   echo "Linux"; fi').read().split('\r')[0].split('\n')[0]
@@ -268,6 +297,16 @@ shell = sh.read().split('\n')
 
 theme = "Ace_Admin"
 
+if os.path.exists("info.sh"):
+    os.system("./info.sh '" + shell[0] + "'")
+    os.system("./info.sh '" + "JCM " + Versino + "'")
+    os.system("./info.sh '" + "name: " + dev_name + "'")
+    os.system("./info.sh '" + "python: " + python + "'")
+    os.system("./info.sh '" + "dir: " + dir + "'")
+    os.system("./info.sh '" + "OS: " + OS + "'")
+    os.system("./info.sh '" + "OS: " + OS_ + "'")
+    os.system("./info.sh '" + "port: " + str(port) + "'")
+    os.system("./info.sh '" + "theme: " + theme + "'")
 print(shell[0])
 print("JCM " + Versino)
 print("name: " + dev_name)
@@ -300,6 +339,9 @@ if os.path.exists(".config/main/debug"):
 if dev_name == ' JIANG-G5-5500-P':
     info['debug'] = True
 if info['debug']:
+    if os.path.exists("info.sh"):
+        os.system("./info.sh '" + "DEBUG" + "'")
+        os.system("error.sh '" + "DEBUG" + "'")
     print('Debug')
 
 
