@@ -53,15 +53,28 @@ else:
     install_diri = b"/usr/jcm"
 
 print(text["name"])
-install_dir = input(text["insdir"] + "[" + install_diri.decode("utf-8") + "] ").encode("utf-8")
+install_dir = b''
+if len(sys.argv) == 1:
+    install_dir = input(text["insdir"] + "[" + install_diri.decode("utf-8") + "] ").encode("utf-8")
+else:
+    if sys.argv[1] != "-y":
+        install_dir = input(text["insdir"] + "[" + install_diri.decode("utf-8") + "] ").encode("utf-8")
 if install_dir == b'':
     install_dir = install_diri
-install_port = input(text["port"] + "[" + str(install_porti) + "] ")
+if len(sys.argv) == 1:
+    install_port = input(text["port"] + "[" + str(install_porti) + "] ")
+else:
+    if sys.argv[1] != "-y":
+        install_port = input(text["port"] + "[" + str(install_porti) + "] ")
 if install_port == '':
     install_port = install_porti
 else:
     install_port = int(install_port)
-install_boot = input(text["boot"] + "[" + install_booti.decode("utf-8") + "] ").encode("utf-8")
+if len(sys.argv) == 1:
+    install_boot = input(text["boot"] + "[" + install_booti.decode("utf-8") + "] ").encode("utf-8")
+else:
+    if sys.argv[1] != "-y":
+        install_boot = input(text["boot"] + "[" + install_booti.decode("utf-8") + "] ").encode("utf-8")
 if install_boot == b'y' or install_boot == b'yes' or install_boot == b'':
     install_boot = install_booti
 print("#############################")
