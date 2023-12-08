@@ -69,6 +69,28 @@ function infoupdata_(){
             document.getElementById(servername + 'text').innerHTML = data.romnamemain + "";
             document.getElementById(servername + 't').innerHTML = data.rommain + "";
 
+            servername = 'batmain_';
+            if (data.bat != 0){
+                if (data.bat < 50) {
+                    document.getElementById(servername + 'c').style = "";
+                    //var $box = $('#' + servername).closest('.infobox');
+                    //var barColor = 'brown';//$('#' + servername).data('color');// || (!$box.hasClass('infobox-dark') ? $box.css('color') : 'rgba(255,255,255,0.95)');
+                    $('#' + servername).data('easyPieChart').update(data.bat).options.barColor = '#3983C2';
+                } else if (data.bat < 80) {
+                    document.getElementById(servername + 'c').style = "color: orange;";
+                    //var $box = $('#' + servername).closest('.infobox');
+                    //var barColor = 'brown';//$('#' + servername).data('color');// || (!$box.hasClass('infobox-dark') ? $box.css('color') : 'rgba(255,255,255,0.95)');
+                    $('#' + servername).data('easyPieChart').update(data.bat).options.barColor = 'orange';
+                } else {
+                    document.getElementById(servername + 'c').style = "color: brown;";
+                    //var $box = $('#' + servername).closest('.infobox');
+                    //var barColor = 'brown';//$('#' + servername).data('color');// || (!$box.hasClass('infobox-dark') ? $box.css('color') : 'rgba(255,255,255,0.95)');
+                    $('#' + servername).data('easyPieChart').update(data.bat).options.barColor = 'brown';
+                }
+                document.getElementById(servername + 'text').innerHTML = data.bat + "";
+                document.getElementById(servername + 't').innerHTML = data.bat + "";
+            }
+
             for (i = 0; i < data.cpufo; i++) {
                 servername = data.cpu[i].name.replace(' ', '_')
                 var ccol = '';
@@ -289,6 +311,29 @@ function infoupdata(){
             }
             document.getElementById(servername + 'text').innerHTML = data.romnamemain + "";
             document.getElementById(servername + 't').innerHTML = data.rommain + "";
+
+            servername = 'batmain_';
+            if (data.bat != 0){
+                if (data.bat < 10) {
+                    document.getElementById(servername + 'c').style = "color: brown;";
+                    //var $box = $('#' + servername).closest('.infobox');
+                    //var barColor = 'brown';//$('#' + servername).data('color');// || (!$box.hasClass('infobox-dark') ? $box.css('color') : 'rgba(255,255,255,0.95)');
+                    $('#' + servername).data('easyPieChart').update(data.bat).options.barColor = 'brown';
+                } else if (data.bat < 20) {
+                    document.getElementById(servername + 'c').style = "color: orange;";
+                    //var $box = $('#' + servername).closest('.infobox');
+                    //var barColor = 'brown';//$('#' + servername).data('color');// || (!$box.hasClass('infobox-dark') ? $box.css('color') : 'rgba(255,255,255,0.95)');
+                    $('#' + servername).data('easyPieChart').update(data.bat).options.barColor = 'orange';
+                } else {
+                    document.getElementById(servername + 'c').style = "";
+                    //var $box = $('#' + servername).closest('.infobox');
+                    //var barColor = 'brown';//$('#' + servername).data('color');// || (!$box.hasClass('infobox-dark') ? $box.css('color') : 'rgba(255,255,255,0.95)');
+                    $('#' + servername).data('easyPieChart').update(data.bat).options.barColor = '#3983C2';
+                }
+                document.getElementById(servername + 'text').innerHTML =   "BAT";
+                document.getElementById(servername + 't').innerHTML = data.bat + "";
+            }
+
             //console.log(data);
             //var str = '';
             if (data.cputemp < 50) {

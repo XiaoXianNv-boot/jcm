@@ -252,6 +252,23 @@
                             </div>
                         </div>
 
+                        <div id="batmain_c" class="infobox infobox-blue2" style="color: orange;display:none">
+                            <div class="infobox-progress">
+                                <div id="batmain_" class="easy-pie-chart percentage" data-percent="0" data-size="46">
+                                    <span class="percent" id="batmain_t">0</span>%
+                                </div>
+                            </div>
+
+                            <div class="infobox-data">
+                                <span class="infobox-text">电池</span>
+
+                                <div id="batmain_text" class="infobox-content">
+                                    <span class="bigger-110"> </span>
+                                    BAT
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
