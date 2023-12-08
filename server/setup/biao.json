@@ -1,5 +1,5 @@
 {
   "name": "设置",
-  "link": "/setup?",
+  "link": "setup?",
   "fa": "fa-cogs"
 }
