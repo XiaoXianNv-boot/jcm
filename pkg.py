@@ -1,8 +1,6 @@
 # coding=utf-8
 #!/bin/python
 
-#pkg 打包程序
-
 import os
 import sys
 import imp
