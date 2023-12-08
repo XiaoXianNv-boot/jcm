@@ -82,6 +82,7 @@ function up_biao() {
                                 if (data.server[i].api == "0") { document.getElementById(servername + "api").innerHTML = '<span class="label label-sm label-warning">离线</span>' }
                                 if (data.server[i].api == "1") { document.getElementById(servername + "api").innerHTML = '<span class="label label-sm label-success">在线</span>' }
                                 if (data.server[i].api == "2") { document.getElementById(servername + "api").innerHTML = '<span class="label label-sm label-inverse">未安装</span>' }
+                                if (data.server[i].api == "3") { document.getElementById(servername + "api").innerHTML = '<span class="label label-sm label-danger ">登录失败</span>' }
                             } else {
                                 up++;
                             }
@@ -180,6 +181,7 @@ function up_biao() {
                                     if (data.server[i].api == "0") { document.getElementById(servername + "api").innerHTML = '<span class="label label-sm label-warning">离线</span>' }
                                     if (data.server[i].api == "1") { document.getElementById(servername + "api").innerHTML = '<span class="label label-sm label-success">在线</span>' }
                                     if (data.server[i].api == "2") { document.getElementById(servername + "api").innerHTML = '<span class="label label-sm label-inverse">未安装</span>' }
+                                    if (data.server[i].api == "3") { document.getElementById(servername + "api").innerHTML = '<span class="label label-sm label-danger ">登录失败</span>' }
                                 } else {
                                     up++;
                                 }
@@ -215,6 +217,7 @@ function up_biao() {
                                 if (data.server[i].api == "0") { document.getElementById(servername + "api").innerHTML = '<span class="label label-sm label-warning">离线</span>' }
                                 if (data.server[i].api == "1") { document.getElementById(servername + "api").innerHTML = '<span class="label label-sm label-success">在线</span>' }
                                 if (data.server[i].api == "2") { document.getElementById(servername + "api").innerHTML = '<span class="label label-sm label-inverse">未安装</span>' }
+                                if (data.server[i].api == "3") { document.getElementById(servername + "api").innerHTML = '<span class="label label-sm label-danger ">登录失败</span>' }
                                 document.getElementById(servername + "safe").innerHTML = data.server[i].safe
                                 jdta = document.getElementById(servername + "cpua");
                                 jdtb = document.getElementById(servername + "cpub");
@@ -377,6 +380,7 @@ function up_biao() {
                                     if (data.server[i].api == "0") { document.getElementById(servername + "api").innerHTML = '<span class="label label-sm label-warning">离线</span>' }
                                     if (data.server[i].api == "1") { document.getElementById(servername + "api").innerHTML = '<span class="label label-sm label-success">在线</span>' }
                                     if (data.server[i].api == "2") { document.getElementById(servername + "api").innerHTML = '<span class="label label-sm label-inverse">未安装</span>' }
+                                    if (data.server[i].api == "3") { document.getElementById(servername + "api").innerHTML = '<span class="label label-sm label-danger ">登录失败</span>' }
                                     document.getElementById(servername + "safe").innerHTML = data.server[i].safe
                                     var jdta = document.getElementById(servername + "cpua");
                                     var jdtb = document.getElementById(servername + "cpub");
