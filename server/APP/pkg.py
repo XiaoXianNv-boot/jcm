@@ -25,10 +25,16 @@ def main(new_client_socket,post,Versino,Headers,info,user):
     if posts[0] == 'bash':
         if posts[1] == 'updata':
             update(new_client_socket,post,Versino,Headers,info)
+            httpserver = imp.load_source("server/main/httpserver.py","server/main/httpserver.py")
+            httpserver.websockend(new_client_socket,b"END\r\n")
         elif posts[1][:len('install')] == 'install':
             install(new_client_socket,post,Versino,Headers,info)
+            httpserver = imp.load_source("server/main/httpserver.py","server/main/httpserver.py")
+            httpserver.websockend(new_client_socket,b"END\r\n")
     else:
         prin(new_client_socket,('参数错误 \r\n').encode("utf-8"))
+        httpserver = imp.load_source("server/main/httpserver.py","server/main/httpserver.py")
+        httpserver.websockend(new_client_socket,b"END\r\n")
 
 def install(new_client_socket,post,Versino,Headers,info):
     posts = post[2].split('=')
@@ -85,21 +91,18 @@ def install(new_client_socket,post,Versino,Headers,info):
         if ff > vv:
             v = f
     rul = ruls[posts[1]] + pkginme[posts[1]+v]
-    cat,cdata = Client(rul,prin,new_client_socket)
+    if os.path.exists(".tmp/APP/dl/" + rul.split('/')[-1]):
+        os.remove(".tmp/APP/dl/" + rul.split('/')[-1])
+    if os.path.exists(".tmp") == False:
+        os.mkdir(".tmp")
+    if os.path.exists(".tmp/APP") == False:
+        os.mkdir(".tmp/APP")
+    if os.path.exists(".tmp/APP/dl") == False:
+        os.mkdir(".tmp/APP/dl")
+    cat,cdata = Client(rul,prin,new_client_socket,".tmp/APP/dl/" + rul.split('/')[-1])
     prin(new_client_socket,b'\r\n')
     if cat == '200':
         #cdata = cdata.decode('utf-8')
-        if os.path.exists(".tmp/APP/dl/" + rul.split('/')[-1]):
-            os.remove(".tmp/APP/dl/" + rul.split('/')[-1])
-        if os.path.exists(".tmp") == False:
-            os.mkdir(".tmp")
-        if os.path.exists(".tmp/APP") == False:
-            os.mkdir(".tmp/APP")
-        if os.path.exists(".tmp/APP/dl") == False:
-            os.mkdir(".tmp/APP/dl")
-        fs = open(".tmp/APP/dl/" + rul.split('/')[-1],'bw')
-        fs.write(cdata)
-        fs.close()
         #os.system("rm -rf .out")
         if os.path.exists(".out/" + rul.split('/')[-1]):
             os.system("rm -rf .out/" + rul.split('/')[-1])
@@ -115,13 +118,13 @@ def install(new_client_socket,post,Versino,Headers,info):
         sh.install(new_client_socket,post,Versino,Headers,info,prin)
         #shrun = os.popen(sys.executable + " .out/server/" + p.split('_')[0] + "/Package.py prin")
         #data = shrun.buffer.read().decode(encoding='utf8')
-        prin(new_client_socket,('END \r\nexit').encode("utf-8"))
+        prin(new_client_socket,('').encode("utf-8"))
     else:
         prin(new_client_socket,(' \x1B[1;3;31mERROR: ' + cdata.decode('utf-8') + '\x1B[0m\r\n').encode("utf-8"))
         fs.close()
         
 
-def Client(yyrul,prin,new_client_socket):
+def Client(yyrul,prin,new_client_socket,file):
 
     prin(new_client_socket,(yyrul).encode("utf-8"))
     tmp = yyrul.split('/')
@@ -138,17 +141,17 @@ def Client(yyrul,prin,new_client_socket):
         ruldir[1] = yyrul[(len(ruldir[0] + tmpp[0] + ':' + tmpp[1])):]
     #cat,cdata = Client(rul,prin,new_client_socket)
     #cat,cdata = run.Client(tmpp[0],int(tmpp[1]),ruldir[1] + '/Packages')
-    cat,cdata = crul(tmpp[0],int(tmpp[1]),ruldir,prin,new_client_socket)
+    cat,cdata = crul(tmpp[0],int(tmpp[1]),ruldir,prin,new_client_socket,file)
     if cat == '301':
         prin(new_client_socket,(' 301\r\n').encode("utf-8"))
-        cat,cdata = Client(cdata.decode('utf-8'),prin,new_client_socket)
+        cat,cdata = Client(cdata.decode('utf-8'),prin,new_client_socket,file)
     elif cat == '302':
         prin(new_client_socket,(' 302\r\n        ').encode("utf-8"))
-        cat,cdata = Client(cdata.decode('utf-8'),prin,new_client_socket)
+        cat,cdata = Client(cdata.decode('utf-8'),prin,new_client_socket,file)
     
     return cat,cdata
 
-def crul(ip,dk,dir,prin,new_client_socket):
+def crul(ip,dk,dir,prin,new_client_socket,file):
     try:
         if dk == "":
             dk = 80
@@ -183,9 +186,12 @@ def crul(ip,dk,dir,prin,new_client_socket):
         cdt = ''
         dowscharcd = 0
         times = time.strftime("%S", time.localtime()) 
+        fs = ''
+        if file != '':
+            fs = open(file,'wb')
         while run == 0:
             try:
-                d = client.recv(1024)
+                d = client.recv(10240000)
             except Exception as e:
                 #print(e.args)
                 #if len(d) != 1024:
@@ -198,15 +204,27 @@ def crul(ip,dk,dir,prin,new_client_socket):
                         d = False
                 #break
             if d:
-                data = data + d
                 if dowscharcd == 0:
+                    data = data + d
                     if len(data.split(b'\r\n\r\n')) > 1:
                         for ddd in data.split(b'\r\n\r\n')[0].split(b'\r\n'):
                             dddd = ddd.split(b': ')
                             if dddd[0] == b'Content-Length':
                                 dowscharcd = int(dddd[1])
                 if dowscharcd != 0:
-                    cd = len(data[len(data.split(b'\r\n\r\n')[0])+4:])
+                    #cd = 0
+                    if file == '':
+                        data = data + d
+                        cd = len(data[len(data.split(b'\r\n\r\n')[0])+4:])
+
+                    else:
+                        if cd == 0:
+                            cd = len(data[len(data.split(b'\r\n\r\n')[0])+4:])
+                            datas = data[len(data.split(b'\r\n\r\n')[0])+4:]
+                            fs.write(datas)
+                        else:
+                            cd += len(d)
+                            fs.write(d)
                     if dowscharcd == cd:
                         run = 1
                         jdcd = len(cdt)
@@ -285,9 +303,11 @@ def crul(ip,dk,dir,prin,new_client_socket):
                     if times != time.strftime("%S", time.localtime()):
                         times = time.strftime("%S", time.localtime())
                         jdcd = len(cdt)
+                        ramall = ''
                         while jdcd != 0:
-                            prin(new_client_socket,('\b \b').encode("utf-8"))
+                            ramall += '\b \b'
                             jdcd = jdcd - 1
+                        prin(new_client_socket,(ramall).encode("utf-8"))
                         ramall = ""
                         size = dowscharcd
                         if size < 1024:
@@ -365,6 +385,8 @@ def crul(ip,dk,dir,prin,new_client_socket):
                 run = 1
         #print(data)
         client.close()
+        if file != '':
+            fs.close()
         if data[:len(b'HTTP/1.1 200')] == b'HTTP/1.1 200':
             datad = b''
             for ddd in data.split(b'\r\n\r\n')[1:]:
@@ -426,7 +448,7 @@ def update(new_client_socket,post,Versino,Headers,info):
                     for yyrul in yrul:
                         if yyrul != '':
                             prin(new_client_socket,(y + '[' + str(i)+ ']\t').encode("utf-8"))
-                            cat,cdata = Client(yyrul + '/Packages',prin,new_client_socket)
+                            cat,cdata = Client(yyrul + '/Packages',prin,new_client_socket,'')
                             if cat == '200':
                                 mkdir(".config/APP/data")
                                 fsw = open(".config/APP/data/" + y + ".js",'bw')
@@ -476,7 +498,7 @@ def update(new_client_socket,post,Versino,Headers,info):
             for yyrul in yrul:
                 if yyrul != '':
                     prin(new_client_socket,(y + '\t').encode("utf-8"))
-                    cat,cdata = Client(yyrul + '/Packages',prin,new_client_socket)
+                    cat,cdata = Client(yyrul + '/Packages',prin,new_client_socket,'')
                     if cat == '200':
                         mkdir(".config/APP/data")
                         fsw = open(".config/APP/data/" + y + ".js",'bw')
@@ -523,4 +545,4 @@ def update(new_client_socket,post,Versino,Headers,info):
     fsw.close()
     fs.close()
     
-    prin(new_client_socket,b"end\a\r\nexit")
+    #prin(new_client_socket,b"end\a\r\nexit")
