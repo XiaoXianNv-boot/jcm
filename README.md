@@ -1,4 +1,4 @@
-# jcm
+# jcm Server Tools
 ## Jiang Cluster Management
 
 - .comfig 配置文件
