@@ -231,11 +231,11 @@ else:
 if install_boot == b'y' or install_boot == b'yes' or install_boot == b'':
     install_boot = install_booti
 if os.path.exists("/usr/bin/bashio"):
-    os.system("bashio api.sh info " + "#############################")
-    os.system("bashio api.sh info " + text["insdir"] + "" + install_dir.decode("utf-8"))
-    os.system("bashio api.sh info " + text["port"] + "" + str(install_port))
-    os.system("bashio api.sh info " + text["boot"] + "" + install_boot.decode("utf-8"))
-    os.system("bashio api.sh info " + "#############################")
+    os.system("bashio api.sh log.info " + "#############################")
+    os.system("bashio api.sh log.info " + text["insdir"] + "" + install_dir.decode("utf-8"))
+    os.system("bashio api.sh log.info " + text["port"] + "" + str(install_port))
+    os.system("bashio api.sh log.info " + text["boot"] + "" + install_boot.decode("utf-8"))
+    os.system("bashio api.sh log.info " + "#############################")
 else:
     print("#############################")
     print(text["insdir"] + "" + install_dir.decode("utf-8"))
@@ -497,4 +497,7 @@ if __name__ == '__main__':\r\n\
     if OS_ == 'Windows':
         os.system("run.bat")
     else:
-        os.system("sh run.sh")
+        if os.path.exists("/usr/bin/bashio"):
+            os.system("/usr/bin/bashio run.sh")
+        else:
+            os.system("sh run.sh")
