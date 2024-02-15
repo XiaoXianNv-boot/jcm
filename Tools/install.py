@@ -34,6 +34,10 @@ text["init"] = "init"
 text["osname"] = "OS Name:"
 text["devname"] = "Host Name:"
 
+if os.path.exists("tmp") == False:
+    os.mkdir("tmp")
+if os.path.exists("lib") == False:
+    os.mkdir("lib")
 if os.path.exists("language") == False:
     os.mkdir("language")
 if os.path.exists("language/Tools") == False:
@@ -54,7 +58,8 @@ def progress_bar( nb_traits,name,d):
 		sys.stdout.write(' ')
 	sys.stdout.write(']')
 	sys.stdout.flush()
-
+#https://github.com/XiaoXianNv-boot/jcm/raw/master/language/Tools/install.py/en_US.py
+#https://github.com/XiaoXianNv-boot/jcm/raw/master/language/install.py/en_US.py
 def down(rul,dir,d): #
     sys.stdout.write(dir.split('/')[-1] + d + ' : Downloading...')
     sys.stdout.flush()
@@ -97,7 +102,7 @@ try:
     language = language[0]
     #language = "zh_CN"
     if os.path.exists("language/Tools/install.py/" + language + ".py") == False:#从git下载
-        down(gitrul + "/install/language/install.py/" + language + ".py","language/Tools/install.py/" + language + ".py","\t\t\t")
+        down(gitrul + "/language/Tools/install.py/" + language + ".py","language/Tools/install.py/" + language + ".py","\t\t\t")
     if os.path.exists("language/Tools/install.py/" + language + ".py") == False:#失败从mirror下载
         down(mirrorrul + "/install/language/install.py/" + language + ".py","language/Tools/install.py/" + language + ".py","\t\t\t")
 
@@ -113,10 +118,6 @@ except Exception as e:
 
 OS_ = platform.system()
 print(sys.executable)
-if os.path.exists("tmp") == False:
-    os.mkdir("tmp")
-if os.path.exists("lib") == False:
-    os.mkdir("lib")
 
 def dl(rul,dir,d):
     if os.path.exists(dir) == False:
@@ -196,7 +197,7 @@ else:
     install_port = int(install_port)
 if len(sys.argv) == 1:
     if os.path.exists("/usr/bin/bashio"):
-        print(text["boot"] + "[" + install_booti.decode("utf-8") + "] " + "no")
+        print(text["boot"] + "[" + install_booti.decode("utf-8") + "] " + "yes")
     else:
         install_boot = input(text["boot"] + "[" + install_booti.decode("utf-8") + "] ").encode("utf-8")
 else:
