@@ -402,7 +402,7 @@ if __name__ == '__main__':\r\n\
         sh = install_dir.decode("utf-8") + "/.out/main_V0.2.pkg/.out/server/main/Package.py"
         sh = imp.load_source(sh,sh)
         sh.install("","","","","",pr)
-        print("install APP")
+        '''print("install APP")
         os.system("mkdir -p " + install_dir.decode("utf-8") + "/.out")
         os.system("mkdir -p " + install_dir.decode("utf-8") + "/.out/APP_V0.2.pkg")
         os.system("mkdir -p " + install_dir.decode("utf-8") + "/.out/APP_V0.2.pkg/.out")
@@ -411,7 +411,7 @@ if __name__ == '__main__':\r\n\
         sh = install_dir.decode("utf-8") + "/.out/APP_V0.2.pkg/.out/server/APP/Package.py"
         sh = imp.load_source(sh,sh)
         sh.install("","","","","",pr)
-
+'''
         fs = open(install_dir.decode("utf-8") + "/run.sh","wb")
         fs.write(b"#!/bin/sh\n")
         fs.write(b"cd " + install_dir + b"\n")
