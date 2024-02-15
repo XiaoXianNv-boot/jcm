@@ -95,6 +95,9 @@ def down(rul,dir,d): #
     sys.stdout.write("\r{}".format(dir.split('/')[-1]) + d + " : Extracting...{}".format(" "*50)) # Ugly but works everywhere
     sys.stdout.flush()
     
+    import time
+    time.sleep(0.5)
+
     os.rename("tmp/" + dir.split("/")[-1],dir)
 
     print("\r{}".format(dir.split('/')[-1]) + d + " : Pull complete [{}]".format(bresp.headers['Content-Length']))
