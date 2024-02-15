@@ -241,12 +241,14 @@ if os.path.exists(".config/main/user") == False:
     if os.path.exists("/usr/bin/bashio"):
         user = os.popen("./api.sh config user").read().split("\n")[0]
         print(text["user"] + user)
+        user = user.encode("utf-8")
     else:
         user = input(text["user"]).encode("utf-8")
     password = ''
     if os.path.exists("/usr/bin/bashio"):
         password = os.popen("./api.sh config password").read().split("\n")[0]
         print(text["passwor"] + password)
+        password = password.encode("utf-8")
     else:
         password = input(text["passwor"]).encode("utf-8")
     tools = imp.load_source('tools',"Tools/Tools.py")
