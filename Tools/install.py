@@ -413,11 +413,21 @@ if __name__ == '__main__':\r\n\
         sh.install("","","","","",pr)
 '''
         fs = open(install_dir.decode("utf-8") + "/run.sh","wb")
-        fs.write(b"#!/bin/sh\n")
+        fs.write(b"#!/bin/bash\n")
         fs.write(b"cd " + install_dir + b"\n")
-        fs.write(b"python3 server/jcm.py")
+        fs.write(b"python3 -m venv venv\n")
+        fs.write(b"source ./venv/bin/activate\n")
+        fs.write(b"venv/bin/python server/jcm.py")
         fs.close()
         os.system('chmod 777 ' + install_dir.decode("utf-8") + "/run.sh")
+        fs = open(install_dir.decode("utf-8") + "/stop.sh","wb")
+        fs.write(b"#!/bin/bash\n")
+        fs.write(b"cd " + install_dir + b"\n")
+        fs.write(b"python3 -m venv venv\n")
+        fs.write(b"source ./venv/bin/activate\n")
+        fs.write(b"venv/bin/python server/jcm.py stop")
+        fs.close()
+        os.system('chmod 777 ' + install_dir.decode("utf-8") + "/stop.sh")
         if os.path.exists("/bin/systemctl"):
             fs = open(install_dir.decode("utf-8") + "/jcm.service","wb")
             fs.write(b"# It's not recommended to modify this file in-place, because it will be\n")
@@ -429,14 +439,21 @@ if __name__ == '__main__':\r\n\
             fs.write(b"\n")
             fs.write(b"[Service]\n")
             fs.write(b"Type=simple\n")
-            fs.write(b"ExecStart=sh " + install_dir + b"/run.sh\n")
+            fs.write(b"ExecStart=/bin/bash " + install_dir + b"/run.sh\n")
+            fs.write(b"ExecStop=/bin/bash " + install_dir + b"/stop.sh\n")
             fs.write(b"\n")
             fs.write(b"[Install]\n")
             fs.write(b"WantedBy=multi-user.target\n")
             fs.close()
-        elif os.path.exists("/etc/rc.d"):
-            os.system("cp run.sh /etc/rc.d/S99jcm")
-       
+            os.system('chmod 777 ' + install_dir.decode("utf-8") + "/jcm.service")
+            os.system("cp  \"" + install_dir.decode("utf-8") + "/jcm.service\" \"/usr/lib/systemd/system/\"")
+            if install_boot == b'yes':
+                os.system("systemctl enable jcm.service")
+                #os.system("systemctl status jcm.service")
+            else:
+                os.system("systemctl disable jcm.service")
+                #os.system("systemctl status jcm.service")
+          
 
         os.system('chmod 777 ' + install_dir.decode("utf-8") + "/jcm.service")
         os.system("cp  \"" + install_dir.decode("utf-8") + "/jcm.service\" \"/usr/lib/systemd/system/\"")
