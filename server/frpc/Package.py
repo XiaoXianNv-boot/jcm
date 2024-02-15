@@ -84,7 +84,7 @@ def remove():
 def out():
     os.system("cp -rf web/Ace_Admin/" + name + " .out/web/Ace_Admin/")
     os.system("cp -rf server/" + name + " .out/server/")
-    os.system("cp -rf lib/frp .out/server/frpc/lib")
+    os.system("#cp -rf lib/frp .out/server/frpc/lib")
     
     rm('.out/server/','__pycache__')
     
