@@ -419,6 +419,7 @@ if __name__ == '__main__':\r\n\
             os.mkdir(install_dir.decode("utf-8") + "/.out")
         print("install main")
         os.system("cp \"" + pwd + "/api.sh\" " + install_dir.decode("utf-8") + "/")
+        os.system("chmod 777 " + install_dir.decode("utf-8") + "/api.sh")
         os.system("mkdir -p " + install_dir.decode("utf-8") + "/.out")
         os.system("mkdir -p " + install_dir.decode("utf-8") + "/.out/main_V0.2.pkg")
         os.system("mkdir -p " + install_dir.decode("utf-8") + "/.out/main_V0.2.pkg/.out")
