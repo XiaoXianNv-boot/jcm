@@ -317,18 +317,63 @@ if install_ != b'exit':
         fs.write(b"@cd " + install_dir + b"\n")
         fs.write(b"@Tools\\.python\\python server\\init.py")
         fs.close()
-        fs = open(install_dir.decode("utf-8") + "\\boot.bat","wb")
-        fs.write(b"@echo BOOT JCM\n")
-        fs.write(b"@timeout /nobreak /t 20\n")
-        fs.write(b"@if \"%1\" == \"v\" goto begin\n")
-        fs.write(b'@mshta vbscript:createobject("wscript.shell").run("""%~0"" v",0)(window.close)&&exit\n')
-        fs.write(b":begin\n")
-        fs.write(b"@cd " + install_dir + b"\n")
-        fs.write(b"@run")
+        fs = open(install_dir.decode("utf-8") + "\\boot.py","wb")
+        fs.write(b"\r\n\
+import win32serviceutil\r\n\
+import win32service\r\n\
+import win32event\r\n\
+import servicemanager\r\n\
+import socket\r\n\
+import sys\r\n\
+import os\r\n\
+import time\r\n\
+\r\n\
+class MyService(win32serviceutil.ServiceFramework):\r\n\
+    _svc_name_ = 'jcm'\r\n\
+    _svc_display_name_ = 'JCM'\r\n\
+    _svc_description_ = 'Jiang Cluster Management.'\r\n\
+\r\n\
+    def __init__(self, args):\r\n\
+        win32serviceutil.ServiceFramework.__init__(self, args)\r\n\
+        self.hWaitStop = win32event.CreateEvent(None, 0, 0, None)\r\n\
+        socket.setdefaulttimeout(60)\r\n\
+        self.is_running = True\r\n\
+\r\n\
+    def SvcStop(self):\r\n\
+        os.system(\"stop.bat\")\r\n\
+        self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)\r\n\
+        win32event.SetEvent(self.hWaitStop)\r\n\
+        self.is_running = False\r\n\
+\r\n\
+    def SvcDoRun(self):\r\n\
+        servicemanager.LogMsg(servicemanager.EVENTLOG_INFORMATION_TYPE,\r\n\
+                              servicemanager.PYS_SERVICE_STARTED,\r\n\
+                              (self._svc_name_, ''))\r\n\
+        self.main()\r\n\
+\r\n\
+    def main(self):\r\n\
+        # Your main logic here\r\n\
+        os.chdir(\"" + install_dir + b"\")\r\n\
+        os.system(\"run.bat\")\r\n\
+        #time.sleep(5)\r\n\
+        pass\r\n\
+\r\n\
+if __name__ == '__main__':\r\n\
+    if len(sys.argv) == 1:\r\n\
+        servicemanager.Initialize()\r\n\
+        servicemanager.PrepareToHostSingle(MyService)\r\n\
+        servicemanager.StartServiceCtrlDispatcher()\r\n\
+    else:\r\n\
+        win32serviceutil.HandleCommandLine(MyService)")
         fs.close()
+        os.system("Tools\\.python\\python -m pip install pywin32")
+        os.system("Tools\\.python\\python -m pip install pyinstaller")
+        os.system("Tools\\.python\\Scripts\\pyinstaller.exe -D --hidden-import  win32serviceutil --hidden-import win32service --hidden-import win32event --hidden-import  servicemanager --hidden-import  win32timezone boot.py")
+        os.system("del build /Q /S")
+        os.system("dist\\boot\\boot.exe install")
         if install_boot == b'yes':
-            os.system(pwd + "/lib/CopyX /Y \"" + install_dir.decode("utf-8") + "\\boot.bat\" \"C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp\"")
-        
+            #os.system(pwd + "/lib/CopyX /Y \"" + install_dir.decode("utf-8") + "\\boot.bat\" \"C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp\"")
+            os.system("sc config jcm start=auto")
     else:
         #print("install python3")
         #OSs = OS.split(' ')
