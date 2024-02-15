@@ -14,6 +14,8 @@ cmd = sys.executable
 cmd = cmd + " -m pip install requests"
 os.system(cmd)
 import requests
+import urllib3
+urllib3.disable_warnings()
 
 gitrul = "https://github.com/XiaoXianNv-boot/jcm/raw/master"
 mirrorrul = "https://jiang144.i234.me/data/jcm"
