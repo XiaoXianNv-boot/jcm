@@ -166,14 +166,27 @@ if os.path.exists("lib/pkg/main_V0.2.pkg") == False:
 print(text["name"])
 install_dir = b''
 if len(sys.argv) == 1:
-    install_dir = input(text["insdir"] + "[" + install_diri.decode("utf-8") + "] ").encode("utf-8")
+    if os.path.exists("/usr/bin/bashio"):
+        fs = open("api.sh","wb")
+        fs.write(b"#!/usr/bin/env bashio\r\n")
+        fs.write(b"echo $(bashio::$1 $2)")
+        fs.close()
+
+        print(text["insdir"] + "[" + install_diri.decode("utf-8") + "] /config/jcm/main")
+        install_dir = "/config/jcm/main"
+    else:
+        install_dir = input(text["insdir"] + "[" + install_diri.decode("utf-8") + "] ").encode("utf-8")
 else:
     if sys.argv[1] != "-y":
         install_dir = input(text["insdir"] + "[" + install_diri.decode("utf-8") + "] ").encode("utf-8")
 if install_dir == b'':
     install_dir = install_diri
 if len(sys.argv) == 1:
-    install_port = input(text["port"] + "[" + str(install_porti) + "] ")
+    if os.path.exists("/usr/bin/bashio"):
+        install_port = os.popen("./api.sh config port").read().split("\n")[0]
+        print(text["port"] + "[" + str(install_porti) + "] " + install_port)
+    else:
+        install_port = input(text["port"] + "[" + str(install_porti) + "] ")
 else:
     if sys.argv[1] != "-y":
         install_port = input(text["port"] + "[" + str(install_porti) + "] ")
@@ -182,7 +195,10 @@ if install_port == '':
 else:
     install_port = int(install_port)
 if len(sys.argv) == 1:
-    install_boot = input(text["boot"] + "[" + install_booti.decode("utf-8") + "] ").encode("utf-8")
+    if os.path.exists("/usr/bin/bashio"):
+        print(text["boot"] + "[" + install_booti.decode("utf-8") + "] " + "no")
+    else:
+        install_boot = input(text["boot"] + "[" + install_booti.decode("utf-8") + "] ").encode("utf-8")
 else:
     if sys.argv[1] != "-y":
         install_boot = input(text["boot"] + "[" + install_booti.decode("utf-8") + "] ").encode("utf-8")
@@ -196,7 +212,10 @@ print("#############################")
 
 if OS_ == 'Windows':
     os.environ['PATH'] = os.environ['PATH'] + ';' + install_dir.decode("utf-8") + "\\Tools\\.bash\\bin"
-install_ = input(text["qr"]).encode("utf-8")
+if os.path.exists("/usr/bin/bashio"):
+    print(text["qr"] + "yes")
+else:
+    install_ = input(text["qr"]).encode("utf-8")
 if install_ != b'exit':
     OS_ = platform.system()
     OS = ''
