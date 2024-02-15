@@ -453,16 +453,10 @@ if __name__ == '__main__':\r\n\
             else:
                 os.system("systemctl disable jcm.service")
                 #os.system("systemctl status jcm.service")
-          
+        elif os.path.exists("/etc/rc.d"):
+            if install_boot == b'yes':
+                os.system("cp run.sh /etc/rc.d/S99jcm")
 
-        os.system('chmod 777 ' + install_dir.decode("utf-8") + "/jcm.service")
-        os.system("cp  \"" + install_dir.decode("utf-8") + "/jcm.service\" \"/usr/lib/systemd/system/\"")
-        if install_boot == b'yes':
-            os.system("systemctl enable jcm.service")
-            #os.system("systemctl status jcm.service")
-        else:
-            os.system("systemctl disable jcm.service")
-            #os.system("systemctl status jcm.service")
         
     if OS_ == 'Windows':
         os.system("run.bat")
