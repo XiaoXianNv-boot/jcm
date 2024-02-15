@@ -240,13 +240,13 @@ if os.path.exists(".config/main/user") == False:
     user = ''
     if os.path.exists("/usr/bin/bashio"):
         install_port = os.popen("./api.sh config user").read().split("\n")[0]
-        user(text["user"] + "[" + str(user) + "] " + install_port)
+        user(text["user"] + "[" + (user) + "] " + install_port)
     else:
         user = input(text["user"]).encode("utf-8")
     password = ''
     if os.path.exists("/usr/bin/bashio"):
         install_port = os.popen("./api.sh config password").read().split("\n")[0]
-        print(text["passwor"] + "[" + str(password) + "] " + install_port)
+        print(text["passwor"] + "[" + (password) + "] " + install_port)
     else:
         password = input(text["passwor"]).encode("utf-8")
     tools = imp.load_source('tools',"Tools/Tools.py")
