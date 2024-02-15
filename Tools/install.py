@@ -236,6 +236,7 @@ print(text["port"] + "" + str(install_port))
 print(text["boot"] + "" + install_boot.decode("utf-8"))
 print("#############################")
 
+install_ = b''
 if OS_ == 'Windows':
     os.environ['PATH'] = os.environ['PATH'] + ';' + install_dir.decode("utf-8") + "\\Tools\\.bash\\bin"
 if os.path.exists("/usr/bin/bashio"):
