@@ -181,7 +181,7 @@ if len(sys.argv) == 1:
         fs.close()
 
         print(text["insdir"] + "[" + install_diri.decode("utf-8") + "] /config/jcm/main")
-        install_dir = "/config/jcm/main"
+        install_dir = b"/config/jcm/main"
     else:
         install_dir = input(text["insdir"] + "[" + install_diri.decode("utf-8") + "] ").encode("utf-8")
 else:
@@ -193,7 +193,7 @@ else:
             fs.close()
 
             print(text["insdir"] + "[" + install_diri.decode("utf-8") + "] /config/jcm/main")
-            install_dir = "/config/jcm/main"
+            install_dir = b"/config/jcm/main"
         else:
             install_dir = input(text["insdir"] + "[" + install_diri.decode("utf-8") + "] ").encode("utf-8")
 if install_dir == b'':
@@ -216,6 +216,7 @@ if install_port == '':
 else:
     install_port = int(install_port)
 install_boot = b""
+install_booti = b"yes"
 if len(sys.argv) == 1:
     if os.path.exists("/usr/bin/bashio"):
         print(text["boot"] + "[" + install_booti.decode("utf-8") + "] " + "yes")
