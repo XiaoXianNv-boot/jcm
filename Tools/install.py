@@ -174,7 +174,7 @@ if os.path.exists("lib/pkg/main_V0.2.pkg") == False:
 print(text["name"])
 install_dir = b''
 if len(sys.argv) == 1:
-    if os.path.exists("/usr/bin/bashio"):
+    if os.path.exists("/usr/lib/bashio/bashio"):
         fs = open("api.sh","wb")
         fs.write(b"#!/usr/bin/env bashio\r\n")
         fs.write(b"echo $(bashio::$1 $2)")
