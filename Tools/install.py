@@ -174,7 +174,7 @@ if os.path.exists("lib/pkg/main_V0.2.pkg") == False:
 print(text["name"])
 install_dir = b''
 if len(sys.argv) == 1:
-    if os.path.exists("/usr/lib/bashio/bashio"):
+    if os.path.exists("/usr/bin/bashio"):
         fs = open("api.sh","wb")
         fs.write(b"#!/usr/bin/env bashio\r\n")
         fs.write(b"echo $(bashio::$1 $2)")
@@ -186,7 +186,16 @@ if len(sys.argv) == 1:
         install_dir = input(text["insdir"] + "[" + install_diri.decode("utf-8") + "] ").encode("utf-8")
 else:
     if sys.argv[1] != "-y":
-        install_dir = input(text["insdir"] + "[" + install_diri.decode("utf-8") + "] ").encode("utf-8")
+        if os.path.exists("/usr/bin/bashio"):
+            fs = open("api.sh","wb")
+            fs.write(b"#!/usr/bin/env bashio\r\n")
+            fs.write(b"echo $(bashio::$1 $2)")
+            fs.close()
+
+            print(text["insdir"] + "[" + install_diri.decode("utf-8") + "] /config/jcm/main")
+            install_dir = "/config/jcm/main"
+        else:
+            install_dir = input(text["insdir"] + "[" + install_diri.decode("utf-8") + "] ").encode("utf-8")
 if install_dir == b'':
     install_dir = install_diri
 if len(sys.argv) == 1:
@@ -197,7 +206,11 @@ if len(sys.argv) == 1:
         install_port = input(text["port"] + "[" + str(install_porti) + "] ")
 else:
     if sys.argv[1] != "-y":
-        install_port = input(text["port"] + "[" + str(install_porti) + "] ")
+        if os.path.exists("/usr/bin/bashio"):
+            install_port = os.popen("./api.sh config port").read().split("\n")[0]
+            print(text["port"] + "[" + str(install_porti) + "] " + install_port)
+        else:
+            install_port = input(text["port"] + "[" + str(install_porti) + "] ")
 if install_port == '':
     install_port = install_porti
 else:
@@ -209,7 +222,10 @@ if len(sys.argv) == 1:
         install_boot = input(text["boot"] + "[" + install_booti.decode("utf-8") + "] ").encode("utf-8")
 else:
     if sys.argv[1] != "-y":
-        install_boot = input(text["boot"] + "[" + install_booti.decode("utf-8") + "] ").encode("utf-8")
+        if os.path.exists("/usr/bin/bashio"):
+            print(text["boot"] + "[" + install_booti.decode("utf-8") + "] " + "yes")
+        else:
+            install_boot = input(text["boot"] + "[" + install_booti.decode("utf-8") + "] ").encode("utf-8")
 if install_boot == b'y' or install_boot == b'yes' or install_boot == b'':
     install_boot = install_booti
 print("#############################")
