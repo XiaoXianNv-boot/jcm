@@ -10,6 +10,14 @@ import binascii
 import hashlib
 import locale
 
+cmd = sys.executable
+cmd = cmd + " -m pip install requests"
+os.system(cmd)
+import requests
+
+gitrul = "https://github.com/XiaoXianNv-boot/jcm/raw/master"
+mirrorrul = "https://jiang144.i234.me/data/jcm"
+
 install_diri = b"C:\jcm"
 install_porti = 8888
 install_booti = b"yes"
@@ -26,10 +34,73 @@ text["init"] = "init"
 text["osname"] = "OS Name:"
 text["devname"] = "Host Name:"
 
+if os.path.exists("language") == False:
+    os.mkdir("language")
+if os.path.exists("language/Tools") == False:
+    os.mkdir("language/Tools")
+if os.path.exists("language/Tools/install.py") == False:
+    os.mkdir("language/Tools/install.py")
+def pr(new_client_socket,data):
+    print(data.decode("utf-8"),end='')
+
+def progress_bar( nb_traits,name,d):
+	sys.stdout.write('\r' + name + d + ' : Downloading [')
+	for i in range(0, nb_traits):
+		if i == nb_traits - 1:
+			sys.stdout.write('>')
+		else:
+			sys.stdout.write('=')
+	for i in range(0, 49 - nb_traits):
+		sys.stdout.write(' ')
+	sys.stdout.write(']')
+	sys.stdout.flush()
+
+def down(rul,dir,d): #
+    sys.stdout.write(dir.split('/')[-1] + d + ' : Downloading...')
+    sys.stdout.flush()
+    bresp = requests.get(rul, stream=True, verify=False)
+    if (bresp.status_code != 200): # When the layer is located at a custom URL
+        if(bresp.status_code == 404):
+            print('\rERROR: Cannot download layer {} [HTTP {}]'.format(dir.split('/')[-1], bresp.status_code, ""))
+            print(bresp.content)
+            return
+        bresp = requests.get(layer['urls'][0], headers=auth_head, stream=True, verify=False)
+        if (bresp.status_code != 200):
+            print('\rERROR: Cannot download layer {} [HTTP {}]'.format(dir.split('/')[-1], bresp.status_code, bresp.headers['Content-Length']))
+            print(bresp.content)
+            return
+            #exit(1)
+    # Stream download and follow the progress
+    bresp.raise_for_status()
+    unit = int(bresp.headers['Content-Length']) / 50
+    acc = 0
+    nb_traits = 0
+    progress_bar( nb_traits,dir.split('/')[-1],d)
+    with open("tmp/" + dir.split("/")[-1], "wb") as file:
+        for chunk in bresp.iter_content(chunk_size=8192): 
+            if chunk:
+                file.write(chunk)
+                acc = acc + 8192
+                if acc > unit:
+                    nb_traits = nb_traits + 1
+                    progress_bar( nb_traits,dir.split('/')[-1],d)
+                    acc = 0
+    sys.stdout.write("\r{}".format(dir.split('/')[-1]) + d + " : Extracting...{}".format(" "*50)) # Ugly but works everywhere
+    sys.stdout.flush()
+    
+    os.rename("tmp/" + dir.split("/")[-1],dir)
+
+    print("\r{}".format(dir.split('/')[-1]) + d + " : Pull complete [{}]".format(bresp.headers['Content-Length']))
+
 try:
     language = locale.getdefaultlocale()
     language = language[0]
     #language = "zh_CN"
+    if os.path.exists("language/Tools/install.py/" + language + ".py") == False:#从git下载
+        down(gitrul + "/install/language/install.py/" + language + ".py","language/Tools/install.py/" + language + ".py","\t\t\t")
+    if os.path.exists("language/Tools/install.py/" + language + ".py") == False:#失败从mirror下载
+        down(mirrorrul + "/install/language/install.py/" + language + ".py","language/Tools/install.py/" + language + ".py","\t\t\t")
+
     run = imp.load_source('run',"language/Tools/install.py/" + language + ".py")
     for textname in text.keys():
         try:
@@ -40,17 +111,57 @@ try:
 except Exception as e:
     print(e.args)
 
-def pr(new_client_socket,data):
-    print(data.decode("utf-8"),end='')
-
 OS_ = platform.system()
+print(sys.executable)
+if os.path.exists("tmp") == False:
+    os.mkdir("tmp")
+if os.path.exists("lib") == False:
+    os.mkdir("lib")
+
+def dl(rul,dir,d):
+    if os.path.exists(dir) == False:
+        down(gitrul + rul,dir,d)
+    if os.path.exists(dir) == False:
+        down(mirrorrul + rul,dir,d)
+
 if OS_ == 'Windows':
+    rul = ''
+    if os.path.exists("jcm_install") == False:
+        os.mkdir("jcm_install")
+    if sys.executable.split('\\')[-1] == "install.exe":
+        os.chdir("jcm_install")
+        print("Init ...")
+        pwd = os.getcwd()
+    if os.path.exists("lib/pkg") == False:
+        os.mkdir("lib/pkg")
+    if os.path.exists("lib/7z") == False:
+        os.mkdir("lib/7z")
+    if os.path.exists("lib/7z/7z.dll") == False:
+        dl(rul + "/lib/7z/7z.dll","lib/7z/7z.dll","\t\t\t")
+    if os.path.exists("lib/7z/7z.exe") == False:
+        dl(rul + "/lib/7z/7z.exe","lib/7z/7z.exe","\t\t\t")
+    if os.path.exists("lib/bash.zip") == False:
+        dl(rul + "/lib/bash.zip","lib/bash.zip","\t\t")
+    if os.path.exists("lib/CopyX.exe") == False:
+        dl(rul + "/lib/CopyX.exe","lib/CopyX.exe","\t\t")
+    if os.path.exists("lib/NET.exe") == False:
+        dl(rul + "/lib/NET.exe","lib/NET.exe","\t\t\t")
+    if os.path.exists("lib/python-3.6.7.exe") == False:
+        dl(rul + "/lib/python-3.6.7.exe","lib/python-3.6.7.exe","\t")
+    if os.path.exists("lib/python-3.8.2.exe") == False:
+        dl(rul + "/lib/python-3.8.2.exe","lib/python-3.8.2.exe","\t")
+    if os.path.exists("lib/python-3.10.5.exe") == False:
+        dl(rul + "/lib/python-3.10.5.exe","lib/python-3.10.5.exe","\t")
+
 #    os.system("echo %PATH%")
 #    os.system("ls")
 #    os.system("pwd")
     install_diri = b"C:\jcm"
 else:
     install_diri = b"/usr/jcm"
+
+if os.path.exists("lib/pkg/main_V0.2.pkg") == False:
+    dl(rul + "/pkg/main_V0.2.pkg","lib/pkg/main_V0.2.pkg","\t\t")
 
 print(text["name"])
 install_dir = b''
