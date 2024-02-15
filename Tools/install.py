@@ -40,6 +40,8 @@ if os.path.exists("tmp") == False:
     os.mkdir("tmp")
 if os.path.exists("lib") == False:
     os.mkdir("lib")
+if os.path.exists("lib/pkg") == False:
+    os.mkdir("lib/pkg")
 if os.path.exists("language") == False:
     os.mkdir("language")
 if os.path.exists("language/Tools") == False:
