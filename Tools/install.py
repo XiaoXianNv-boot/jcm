@@ -162,7 +162,7 @@ else:
     install_diri = b"/usr/jcm"
 
 if os.path.exists("lib/pkg/main_V0.2.pkg") == False:
-    dl(rul + "/pkg/main_V0.2.pkg","lib/pkg/main_V0.2.pkg","\t\t")
+    dl("/pkg/main_V0.2.pkg","lib/pkg/main_V0.2.pkg","\t\t")
 
 print(text["name"])
 install_dir = b''
