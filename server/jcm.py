@@ -239,14 +239,14 @@ if os.path.exists(".config/main/user") == False:
     print(text["init"])
     user = ''
     if os.path.exists("/usr/bin/bashio"):
-        user = os.popen("./api.sh config user").read().split("\n")[0]
+        user = os.popen("bashio api.sh config user").read().split("\n")[0]
         print(text["user"] + user)
         user = user.encode("utf-8")
     else:
         user = input(text["user"]).encode("utf-8")
     password = ''
     if os.path.exists("/usr/bin/bashio"):
-        password = os.popen("./api.sh config password").read().split("\n")[0]
+        password = os.popen("bashio api.sh config password").read().split("\n")[0]
         print(text["passwor"] + password)
         password = password.encode("utf-8")
     else:

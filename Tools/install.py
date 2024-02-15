@@ -200,14 +200,14 @@ if install_dir == b'':
     install_dir = install_diri
 if len(sys.argv) == 1:
     if os.path.exists("/usr/bin/bashio"):
-        install_port = os.popen("./api.sh config port").read().split("\n")[0]
+        install_port = os.popen("bashio api.sh config port").read().split("\n")[0]
         print(text["port"] + "[" + str(install_porti) + "] " + install_port)
     else:
         install_port = input(text["port"] + "[" + str(install_porti) + "] ")
 else:
     if sys.argv[1] != "-y":
         if os.path.exists("/usr/bin/bashio"):
-            install_port = os.popen("./api.sh config port").read().split("\n")[0]
+            install_port = os.popen("bashio api.sh config port").read().split("\n")[0]
             print(text["port"] + "[" + str(install_porti) + "] " + install_port)
         else:
             install_port = input(text["port"] + "[" + str(install_porti) + "] ")
