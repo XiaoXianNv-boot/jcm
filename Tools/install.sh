@@ -51,9 +51,9 @@ cd jcm_install
 
 mkdir -p Tools
 cd Tools
-curl -#fL -o install.py -C - $gitdir/install/install.py
+curl -#fL -o install.py -C - $gitdir/Tools/install.py
 if [ ! -e install.py ]; then
-    curl -#fL -o install.py -C - $dir/install/install.py
+    curl -#fL -o install.py -C - $mirrordir/install/install.py
 fi
 cd ..
 mkdir -p lib
