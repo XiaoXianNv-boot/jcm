@@ -264,21 +264,21 @@ if install_ != b'exit':
         #    os.system('sudo apt update')
     os.chdir(install_dir.decode("utf-8"))
     if OS_ == 'Windows':
-        osss = OS.split('Windows 1')
-        if len(osss) == 2:
-            print("install python3")
-            if os.path.exists(install_dir.decode("utf-8") + "/Tools/.python") == False:
-                #os.remove(install_dir.decode("utf-8") + "/Tools/.python")
-                os.system(install_dir.decode("utf-8") + "/Tools/7z/7z.exe x " + pwd + "\\lib\\python-3.10.5.7z -r -o" + install_dir.decode("utf-8") + "\\ -aoa >>log.log")
-        else:
-            if os.path.exists(install_dir.decode("utf-8") + "\\Tools\\NET") == False:
-                print("install NET")
-                os.mkdir(install_dir.decode("utf-8") + "\\Tools\\NET")
-                os.system(pwd + '\\lib\\NET.exe /norestart /showfinalerror /passive')
-            print("install python3")
-            if os.path.exists(install_dir.decode("utf-8") + "\\Tools\\.python") == False:
-                os.mkdir(install_dir.decode("utf-8") + "\\Tools\\.python")
-            os.system(pwd + "\\lib\\python-3.6.7 /passive  TargetDir=" + install_dir.decode("utf-8") + "\\Tools\\.python InstallAllUsers=1 PrependPath=0")
+        #osss = OS.split('Windows 1')
+        #if len(osss) == 2:
+        #    print("install python3")
+        #    if os.path.exists(install_dir.decode("utf-8") + "/Tools/.python") == False:
+        #        #os.remove(install_dir.decode("utf-8") + "/Tools/.python")
+        #        os.system(install_dir.decode("utf-8") + "/Tools/7z/7z.exe x " + pwd + "\\lib\\python-3.10.5.7z -r -o" + install_dir.decode("utf-8") + "\\ -aoa >>log.log")
+        #else:
+        #    if os.path.exists(install_dir.decode("utf-8") + "\\Tools\\NET") == False:
+        #        print("install NET")
+        #        os.mkdir(install_dir.decode("utf-8") + "\\Tools\\NET")
+        #        os.system(pwd + '\\lib\\NET.exe /norestart /showfinalerror /passive')
+        print("install python3")
+        #    if os.path.exists(install_dir.decode("utf-8") + "\\Tools\\.python") == False:
+        #        os.mkdir(install_dir.decode("utf-8") + "\\Tools\\.python")
+        os.system(pwd + "\\lib\\python-3.10.5 /passive  TargetDir=" + install_dir.decode("utf-8") + "\\Tools\\.python InstallAllUsers=1 PrependPath=0")
         print("install bash")
         if os.path.exists(install_dir.decode("utf-8") + "/Tools/.bash") == False:
             #os.remove(install_dir.decode("utf-8") + "/Tools/.bash")
@@ -294,14 +294,19 @@ if install_ != b'exit':
         if os.path.exists(install_dir.decode("utf-8") + "/.out") == False:
             os.mkdir(install_dir.decode("utf-8") + "/.out")
         print("install main")
-        sh = "tar xzf lib/pkg/main_V0.2.pkg " + "-C .out/main_V0.2.pkg/.out"
+        if os.path.exists(install_dir.decode("utf-8") + "/.out/main_V0.2.pkg") == False:
+            os.mkdir(install_dir.decode("utf-8") + "/.out/main_V0.2.pkg")
+        if os.path.exists(install_dir.decode("utf-8") + "/.out/main_V0.2.pkg/") == False:
+            os.mkdir(install_dir.decode("utf-8") + "/.out/main_V0.2.pkg/")
+
+        sh = "tar xzf lib/pkg/main_V0.2.pkg " + "-C .out/main_V0.2.pkg/"
         #print(sh)
         #os.system("pwd")
-        '''os.system(sh)
+        os.system(sh)
         sh = install_dir.decode("utf-8") + "/.out/main_V0.2.pkg/.out/server/main/Package.py "
         sh = imp.load_source(sh,sh)
         sh.install("","","","","",pr)
-        print("install APP")
+        '''print("install APP")
         sh = "tar xzf lib/pkg/APP_V0.2.pkg " + "-C .out/APP_V0.2.pkg/.out"
         os.system(sh)
         sh = install_dir.decode("utf-8") + "/.out/APP_V0.2.pkg/.out/server/APP/Package.py "
