@@ -230,11 +230,18 @@ else:
             install_boot = input(text["boot"] + "[" + install_booti.decode("utf-8") + "] ").encode("utf-8")
 if install_boot == b'y' or install_boot == b'yes' or install_boot == b'':
     install_boot = install_booti
-print("#############################")
-print(text["insdir"] + "" + install_dir.decode("utf-8"))
-print(text["port"] + "" + str(install_port))
-print(text["boot"] + "" + install_boot.decode("utf-8"))
-print("#############################")
+if os.path.exists("/usr/bin/bashio"):
+    os.system("bashio api.sh info" + "#############################")
+    os.system("bashio api.sh info" + text["insdir"] + "" + install_dir.decode("utf-8"))
+    os.system("bashio api.sh info" + text["port"] + "" + str(install_port))
+    os.system("bashio api.sh info" + text["boot"] + "" + install_boot.decode("utf-8"))
+    os.system("bashio api.sh info" + "#############################")
+else:
+    print("#############################")
+    print(text["insdir"] + "" + install_dir.decode("utf-8"))
+    print(text["port"] + "" + str(install_port))
+    print(text["boot"] + "" + install_boot.decode("utf-8"))
+    print("#############################")
 
 install_ = b''
 if OS_ == 'Windows':
