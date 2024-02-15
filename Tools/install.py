@@ -215,6 +215,7 @@ if install_port == '':
     install_port = install_porti
 else:
     install_port = int(install_port)
+install_boot = ""
 if len(sys.argv) == 1:
     if os.path.exists("/usr/bin/bashio"):
         print(text["boot"] + "[" + install_booti.decode("utf-8") + "] " + "yes")
