@@ -27,14 +27,17 @@ if [ ! -e /bin/python3 ]; then
         apt update
         apt install -y python3
         apt install -y python3-venv
+        apt install -y python3-pip
     else
         if [ -e /bin/yum ]; then
             yum install -y python3
             yum install -y python3-venv
+            yum install -y python3-pip
         else
             if [ -e /sbin/apk ]; then
                 apk add --no-cache python3
                 apk add --no-cache python3-venv
+                apk add --no-cache python3-pip
             else
                 if [ -e /bin/opkg ]; then
                     opkg update
