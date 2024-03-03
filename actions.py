@@ -117,7 +117,10 @@ def download_all():
     for da in fsdata[:-1]:
         da = da.split(b"\n")
         name = da[0].split(b":")[-1].decode("utf-8")
-        name = name + "_" + da[2].split(b":")[-1].decode("utf-8") + ".pkg"
+        for dd in da:
+            dd = dd.split(b":")
+            if dd[0] == b"Version":
+                name = name + "_" + dd[-1].decode("utf-8") + ".pkg"
         down(rul + "pkg/" + name,".jcm/pkg/" + name,"\t",prin,"")
         print("")
 
