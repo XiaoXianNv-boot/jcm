@@ -36,5 +36,5 @@ jobs:
           draft: false
           prerelease: false
           files: |
-              .jcm/install/*
+              jcm/install/*
            
