@@ -17,7 +17,10 @@ import requests
 import urllib3
 urllib3.disable_warnings()
 
+#os.chdir("install/jcm_install")
+
 gitrul = "https://github.com/XiaoXianNv-boot/jcm/raw/master"
+githul = "https://github.com/XiaoXianNv-boot/jcm/releases/download"
 mirrorrul = "https://jiang144.i234.me/data/jcm"
 
 install_diri = b"C:\jcm"
@@ -48,6 +51,7 @@ if os.path.exists("language/Tools") == False:
     os.mkdir("language/Tools")
 if os.path.exists("language/Tools/install.py") == False:
     os.mkdir("language/Tools/install.py")
+
 def pr(new_client_socket,data):
     print(data.decode("utf-8"),end='')
 
@@ -96,7 +100,7 @@ def down(rul,dir,d): #
                     acc = 0
     sys.stdout.write("\r{}".format(dir.split('/')[-1]) + d + " : Extracting...{}".format(" "*50)) # Ugly but works everywhere
     sys.stdout.flush()
-    
+
     import time
     time.sleep(0.5)
 
@@ -132,6 +136,11 @@ def dl(rul,dir,d):
     if os.path.exists(dir) == False:
         down(mirrorrul + rul,dir,d)
 
+#print(os.args)
+if os.path.exists("tmp") == False:
+    os.mkdir("tmp")
+if os.path.exists("lib") == False:
+    os.mkdir("lib")
 if OS_ == 'Windows':
     rul = ''
     if os.path.exists("jcm_install") == False:
@@ -148,6 +157,10 @@ if OS_ == 'Windows':
         dl(rul + "/lib/7z/7z.dll","lib/7z/7z.dll","\t\t\t")
     if os.path.exists("lib/7z/7z.exe") == False:
         dl(rul + "/lib/7z/7z.exe","lib/7z/7z.exe","\t\t\t")
+    #if os.path.exists("lib/instsrv.exe") == False:
+    #    down(rul + "/lib/instsrv.exe","lib/instsrv.exe","\t\t\t")
+    #if os.path.exists("lib/srvany.exe") == False:
+    #    down(rul + "/lib/srvany.exe","lib/srvany.exe","\t\t\t")
     if os.path.exists("lib/bash.zip") == False:
         dl(rul + "/lib/bash.zip","lib/bash.zip","\t\t")
     if os.path.exists("lib/CopyX.exe") == False:
@@ -349,7 +362,7 @@ if install_ != b'exit':
         '''
         fs = open(install_dir.decode("utf-8") + "\\run.bat","wb")
         fs.write(b"@cd " + install_dir + b"\n")
-        fs.write(b"@Tools\\.python\\python server\\init.py")
+        fs.write(b"@Tools\\.python\\python server\\jcm.py")
         fs.close()
         fs = open(install_dir.decode("utf-8") + "\\boot.py","wb")
         fs.write(b"\r\n\
@@ -489,11 +502,13 @@ if __name__ == '__main__':\r\n\
             else:
                 os.system("systemctl disable jcm.service")
                 #os.system("systemctl status jcm.service")
+            
+
         elif os.path.exists("/etc/rc.d"):
             if install_boot == b'yes':
                 os.system("cp run.sh /etc/rc.d/S99jcm")
+       
 
-        
     if OS_ == 'Windows':
         os.system("run.bat")
     else:

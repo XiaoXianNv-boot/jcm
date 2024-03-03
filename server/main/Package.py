@@ -7,7 +7,58 @@ import os
 import sys
 
 name = "main"
-Version = "V0.2"
+Version = "V0.3"
+
+rul = "https://jiang144.i234.me/data/jcm"
+
+def progress_bar( nb_traits,name,d,prin,new_client_socket):
+	prin(new_client_socket,('\r' + name + d + ' : Downloading [').encode("utf-8"))
+	for i in range(0, nb_traits):
+		if i == nb_traits - 1:
+			prin(new_client_socket,'>'.encode("utf-8"))
+		else:
+			prin(new_client_socket,'='.encode("utf-8"))
+	for i in range(0, 49 - nb_traits):
+		prin(new_client_socket,' '.encode("utf-8"))
+	prin(new_client_socket,']'.encode("utf-8"))
+
+def down(rul,dir,d,prin,new_client_socket):
+    import requests
+    prin(new_client_socket,(dir.split('/')[-1] + d + ' : Downloading...').encode("utf-8"))
+    
+    bresp = requests.get(rul, stream=True, verify=False)
+    if (bresp.status_code != 200): # When the layer is located at a custom URL
+        if(bresp.status_code == 404):
+            prin(new_client_socket,('\rERROR: Cannot download layer {} [HTTP {}]'.format(dir.split('/')[-1], bresp.status_code, "")).encode("utf-8"))
+            prin(new_client_socket,(str(bresp.content)).encode("utf-8"))
+            return
+        bresp = requests.get(layer['urls'][0], headers=auth_head, stream=True, verify=False)
+        if (bresp.status_code != 200):
+            prin(new_client_socket,('\rERROR: Cannot download layer {} [HTTP {}]'.format(dir.split('/')[-1], bresp.status_code, bresp.headers['Content-Length'])).encode("utf-8"))
+            prin(new_client_socket,(str(bresp.content)).encode("utf-8"))
+            return
+            #exit(1)
+    # Stream download and follow the progress
+    bresp.raise_for_status()
+    unit = int(bresp.headers['Content-Length']) / 50
+    acc = 0
+    nb_traits = 0
+    progress_bar( nb_traits,dir.split('/')[-1],d,prin,new_client_socket)
+    with open(".out/" + name + "_V0.2.pkg/" + dir.split("/")[-1], "wb") as file:
+        for chunk in bresp.iter_content(chunk_size=8192): 
+            if chunk:
+                file.write(chunk)
+                acc = acc + 8192
+                if acc > unit:
+                    nb_traits = nb_traits + 1
+                    progress_bar( nb_traits,dir.split('/')[-1],d,prin,new_client_socket)
+                    acc = 0
+    prin(new_client_socket,("\r{}".format(dir.split('/')[-1]) + d + " : Extracting...{}".format(" "*50)).encode("utf-8")) # Ugly but works everywhere
+    os.rename(".out/" + name + "_V0.2.pkg/" + dir.split("/")[-1],dir)
+
+    prin(new_client_socket,("\r{}".format(dir.split('/')[-1]) + d + " : Pull complete [{}]".format(bresp.headers['Content-Length'])).encode("utf-8"))
+
+    
 
 def install(new_client_socket,post,Versino,Headers,info,prin):
     import imp
@@ -21,6 +72,14 @@ def install(new_client_socket,post,Versino,Headers,info,prin):
     for i in pkg:
         if i.split('\r')[0] == name:
             inpkg = ""
+    if os.path.exists("Tools/.python") == True:
+        if os.path.exists("lib/openhardwaremonitor-v0.9.6.zip") == False:
+            #sh = os.popen("Tools\\.python\\python.exe -m pip install requests").read()
+            #prin(new_client_socket,(sh.encode("utf-8")))
+            down(rul + "/lib/openhardwaremonitor-v0.9.6.zip","lib/openhardwaremonitor-v0.9.6.zip","\t",prin,new_client_socket)
+            prin(new_client_socket,("\n\r").encode("utf-8"))      
+        if os.path.exists("Tools/openhardwaremonitor") == False:
+            os.system("Tools\\7z\\7z.exe x lib\\openhardwaremonitor-v0.9.6.zip -r -oTools\\openhardwaremonitor -aoa")
     prin(new_client_socket,("install " + name + " V0.2\n\r").encode("utf-8"))      
     os.system("cp -rf .out/" + name + "_V0.2.pkg/.out/* ./")
     
@@ -38,6 +97,12 @@ def install(new_client_socket,post,Versino,Headers,info,prin):
             inpkg = ""
     if inpkg == "install":
         os.system("echo " + 'setup' + ">>server/server.ini")
+    inpkg = "install"
+    for i in pkg:
+        if i.split('\r')[0] == 'APP':
+            inpkg = ""
+    if inpkg == "install":
+        os.system("echo " + 'APP' + ">>server/server.ini")
     prin(new_client_socket,("重启服务\n\r").encode("utf-8"))   
     if new_client_socket != "":
         #os.system("sh run.sh &")
@@ -55,6 +120,7 @@ def out():
     os.system("cp -rf server/" + name + " .out/server/")
     os.system("cp -rf web/Ace_Admin/" + 'info' + " .out/web/Ace_Admin/")
     os.system("cp -rf server/" + 'info' + " .out/server/")
+    os.system("cp -rf language/server/" + 'info' + " .out/language/server/")
     os.system("cp -rf web/Ace_Admin/" + 'setup' + " .out/web/Ace_Admin/")
     os.system("cp -rf server/" + 'setup' + " .out/server/")
     #os.system("cp -rf web/" + "info" + " .out/web/")
@@ -74,6 +140,10 @@ def out():
     os.system("cp -rf Tools/install.bat .out/Tools/")
     os.system("cp -rf Tools/install.sh .out/Tools/")
     os.system("cp -rf Tools/install.py .out/Tools/")
+    os.system("cp -rf web/Ace_Admin/" + "APP" + " .out/web/Ace_Admin/")
+    os.system("rm -rf .out/web/APP/info.json")
+    os.system("cp -rf server/" + "APP" + " .out/server/")
+
     
     rm('.out/server/','__pycache__')
     

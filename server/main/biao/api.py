@@ -9,10 +9,11 @@ import imp
 import hashlib
 import socket
 
-def main(new_client_socket,post,Headers,info,user):
+def main(new_client_socket,RUL_CS,post_data,Headers,info,user):
     link = ''
     path = ''
     res = ''
+    post = RUL_CS
     for i in post:
         tmp = i.split('=')
         if tmp[0] == 'link':
@@ -51,71 +52,57 @@ def main(new_client_socket,post,Headers,info,user):
             sh = imp.load_source("server/main/httpclient","server/main/httpclient.py")
             #cat,cdata = sh.Client(ii[7],int(ii[19]),"/main/biao/dev")
             cat,cdata = sh.Client(ii[7],int(ii[19]),'/main/biao/dev','')
-            if cdata == b'Connection refused':
-                res += '{\n    "name":"Connection refused",\n    "link":"",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
+            if cdata == b'timed out':
+                res += '{\n    "name":"timed out",\n    "link":"info?",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
+            elif cdata == b'Connection refused':
+                res += '{\n    "name":"Connection refused",\n    "link":"info?",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
             else:
                 if cat == "404":
-                    res += '{\n    "name":"404",\n    "link":"",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
+                    res += '{\n    "name":"404",\n    "link":"info?",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
                 elif cat == "502":
-                    res += '{\n    "name":"无响应",\n    "link":"",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
+                    res += '{\n    "name":"无响应",\n    "link":"info?",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
                 elif cat == '401':
-
-                    obj = hashlib.md5()
-                    md = ii[11]
-                    md += time.strftime("I %Y-%m-%d %H:%M ", time.localtime())
-                    obj.update((md).encode('utf-8'))
-                    a = obj.hexdigest()
-                    if info['debug']:
-                        print(md)
-                        print(a)
-                    obj = hashlib.md5()
-                    md = ii[15]
-                    md += time.strftime("I %Y-%m-%d %H:%M ", time.localtime())
-                    obj.update((md).encode('utf-8'))
-                    b = obj.hexdigest()
-                    if info['debug']:
-                        print(md)
-                        print(b)
-                    cat,cdata = sh.Client(ii[7],int(ii[19]),'/login/dev','a=' + a + '&b=' + b)
+                    data = sh.logindev(ii[3])
+                    cat = data[0]
                     if cat == '200':
-                        cdata = cdata.decode("utf-8")
-                        if cdata == '{"data":"login"}\r\n\r\n':
-                            cat,cdata = sh.Client(ii[7],int(ii[19]),"/main/biao/dev")
+                        #cdata = cdata.decode("utf-8")
+                        #if cdata == '{"data":"login"}\r\n\r\n':
+                            cat,cdata = sh.Client(ii[7],int(ii[19]),'/main/biao/dev','')
                             if cat == "404":
-                                res += '{\n    "name":"404",\n    "link":"",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
+                                res += '{\n    "name":"404",\n    "link":"info?",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
                             elif cat == '502':
-                                res += '{\n    "name":"无响应",\n    "link":"",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
+                                res += '{\n    "name":"无响应",\n    "link":"info?",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
                             elif cat == '401':
-                                res += '{\n    "name":"登录失败",\n    "link":"",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
+                                res += '{\n    "name":"登录失败",\n    "link":"info?",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
                             elif cdata == '<!DOCTYPE html>':
-                                res += '{\n    "name":"响应错误",\n    "link":"",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
+                                res += '{\n    "name":"响应错误",\n    "link":"info?",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
                             else:
                                 cdata = cdata.decode("utf-8")[9:]
                                 res += cdata
                                 res += '{}]} \r\n'
-                        else:
-                            cdata = cdata.split('":"')
-                            cdata = cdata[1].split('","')
+                        #else:
+                            #cdata = cdata.split('":"')
+                            #cdata = cdata[1].split('","')
                     else:
                         if cat == "404":
-                            res += '{\n    "name":"404",\n    "link":"",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
+                            res += '{\n    "name":"404",\n    "link":"info?",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
                         elif cat == '502':
-                            res += '{\n    "name":"无响应",\n    "link":"",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
+                            res += '{\n    "name":"无响应",\n    "link":"info?",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
                         elif cat == '401':
-                            res += '{\n    "name":"登录失败",\n    "link":"",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
+                            res += '{\n    "name":"登录失败",\n    "link":"info?",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
                         elif cdata == '<!DOCTYPE html>':
-                            res += '{\n    "name":"响应错误",\n    "link":"",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
+                            res += '{\n    "name":"响应错误",\n    "link":"info?",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
                         else:
                             cdata = cdata.decode("utf-8")[9:]
                             res += cdata
                             res += '{}]} \r\n'
                 elif cdata == '<!DOCTYPE html>':
-                    res += '{\n    "name":"响应错误",\n    "link":"",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
+                    res += '{\n    "name":"响应错误",\n    "link":"info?",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n'
                 else:
                     cdata = cdata.decode("utf-8")[9:]
                     res += cdata
                     res += '{}]} \r\n'
-                    #new_client_socket.send('{\n    "name":"无响应",\n    "link":"",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n').encode("utf-8"))
+                    #new_client_socket.send('{\n    "name":"无响应",\n    "link":"info?",\n    "fa":"fa-tachometer"\n},' + '{}]} \r\n').encode("utf-8"))
     res +=  ']} \r\n'
     httpserver = imp.load_source("server/main/httpserver.py","server/main/httpserver.py")
     httpserver.httppostchar(new_client_socket,"200",res.encode("utf-8"),"application/json",Headers,info)

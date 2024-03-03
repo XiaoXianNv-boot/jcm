@@ -7,6 +7,29 @@ import sys
 import time
 import psutil
 import imp
+import time
+import locale
+
+iftext = {}
+iftext["Charging"] = "Charging"
+iftext["Discharging"] = "Discharging"
+iftext["Full"] = "Full"
+#加载语言文件
+try:
+    language = locale.getdefaultlocale()
+    language = language[0]
+    #language = "zh_CN"
+    if os.path.exists("language/server/info/info/" + language + ".py"):
+        run = imp.load_source('run',"language/server/info/info/" + language + ".py")
+        for textname in iftext.keys():
+            try:
+                textval = run.iftext[textname]
+                iftext[textname] = textval
+            except Exception as e:
+                print(e.args)
+except Exception as e:
+    print(e.args)
+
 
 def rom(info):
     OS = info['OS']
@@ -15,7 +38,7 @@ def rom(info):
     rom=0
     romname = ""
     disks=1
-    if OS == "Linux":
+    '''if OS == "Linux":
         romsh = os.popen("LANG=en_US df -h")
         list = romsh.read().split("\n")
         ilen = len(list)
@@ -45,18 +68,21 @@ def rom(info):
                     romname = list[i].split(" ")[0]
                 i=i+1
                 disks += 1
-    else:
-        list = psutil.disk_partitions()
+    else:'''
+    if True:
+        list = psutil.disk_partitions(False)
         ilen = len(list)
         while i < ilen:
             if list[i].mountpoint == "/boot":
+                i += 1
+            elif list[i].device == "/dev/zram1":
                 i += 1
             else:
                 try:
                     diskinfo = psutil.disk_usage(list[i].mountpoint)
                     if rom < diskinfo.percent:
                         rom = diskinfo.percent
-                        romname = list[i].mountpoint
+                        romname = list[i].device
                 except Exception as e:
                     if(len(e.args) == 2):
                         if e.args[1] != '设备未就绪。':
@@ -97,6 +123,8 @@ def catdisk(OS):
             ii += 1
     fo = ii
     res = res + (('"diskfo":"' + str(fo) + '","disk":[\r\n').encode("utf-8"))
+    fo = len(diskfo)
+    iii = 0
     for i in range(fo):
         device = diskfo[i].mountpoint
         if diskfo[i].device[:len("/dev/loop")] != "/dev/loop":
@@ -134,10 +162,11 @@ def catdisk(OS):
                     diskinfo = " " + diskfo[i].fstype + ' ' + rams + ' / ' + ramall
                 else:
                     name = diskfo[i].device
-                if i == (fo - 1):
+                if iii == (ii - 1):
                     res = res + (('{"name":"' + name + '","minidiskinfo":"' + rams + ' / ' + ramall + '","diskinfo":"' + diskinfo + '","disk":"' + str(ram.percent)[:-2] + '"}\r\n').encode("utf-8"))
                 else:
                     res = res + (('{"name":"' + name + '","minidiskinfo":"' + rams + ' / ' + ramall + '","diskinfo":"' + diskinfo + '","disk":"' + str(ram.percent)[:-2] + '"},\r\n').encode("utf-8"))
+                iii = iii + 1
     fo = os.popen('ls /sys/kernel/debug/mmc*/mmc*/ext_csd 2>/dev/null').read()
     #fo = os.popen('ls .tmp/mmc*/mmc*/ext_csd 2>/dev/null').read().split('\n')
     res = res + (('],\r\n').encode("utf-8"))
@@ -194,7 +223,7 @@ def catcpu(OS):
     res = b''
     fo = psutil.cpu_count()
     if OS == "Windows":
-        shell = os.popen(bin + "wmic cpu get Name")
+        shell = os.popen("wmic cpu get Name")
         bash = shell.read().split('\n')
         cpuname = bash[2]#.split(')')[-1][1:]
 
@@ -227,10 +256,36 @@ def catcpu(OS):
         bash = shell.read().split('\n')
         if len(bash) == 2:
             cputemp = bash[0][:-3]
+    elif OS == "Windows":
+        import clr
+        clr.AddReference(os.getcwd() + '/Tools/openhardwaremonitor/OpenHardwareMonitor/OpenHardwareMonitorLib.dll')  # 填写绝对路径
+        import OpenHardwareMonitor as ohm
+        from OpenHardwareMonitor.Hardware import Computer, HardwareType, SensorType
+        computer = Computer()
+        computer.CPUEnabled = True
+        computer.MainboardEnabled = True
+        computer.FanControllerEnabled = True
+
+        hardwareType = ohm.Hardware.HardwareType
+        sensorType = ohm.Hardware.SensorType
+
+        computer.Open()
+        computer.Open()
+        for hardware in computer.Hardware:
+            hardware.Update()
+            for sensor in hardware.Sensors:
+                rr = str(sensor.Identifier)
+                print(rr)
+                print(sensor.get_Value())
+                if "/temperature" in str(sensor.Identifier):
+                    cputemp = str(sensor.get_Value())
+                    print(sensor.get_Value())
+
     res = res + (('"cputemp":"' + cputemp + '","cpufo":"' + str(fo) + '","cpu":[\r\n').encode("utf-8"))
     #if len(cpuname) > 20:
     #    cpunam = cpuname.split('CPU')
     #    cpuname = cpunam[-1][1:]
+    time.sleep(0.1)
     freq = psutil.cpu_freq(percpu=True)
     cpu = psutil.cpu_percent(percpu=True)
     if len(freq) != len(cpu):
@@ -305,7 +360,7 @@ def catram():
     res = res + (('{"name":"交换空间","raminfo":"' + rams + ' / ' + ramall + '","ram":"' + str(ram.percent) + '"}\r\n').encode("utf-8"))
     return res
 
-def main(new_client_socket,post,Headers,info,user):
+def main(new_client_socket,RUL_CS,post_data,Headers,info,user):
 
     OS = info['OS']
     bin = ''
@@ -318,14 +373,27 @@ def main(new_client_socket,post,Headers,info,user):
     res = res + (('"rommain": "'+rr+'",\r\n').encode("utf-8"))
     res = res + (('"romnamemain": "'+rrr+'",\r\n').encode("utf-8"))
     bat = '0'
+    cat = "0"
+    try:
+        bat = str(psutil.sensors_battery().percent)
+    except Exception as e:
+        bat = '0'
     if os.path.exists("/sys/class/power_supply"):
         dirn = os.listdir("/sys/class/power_supply/") 
         for d in dirn:
             if os.path.exists("/sys/class/power_supply/" + d + "/type"):
                 if os.path.exists("/sys/class/power_supply/" + d + "/capacity"):
-                    cat = os.popen("cat /sys/class/power_supply/" + d + "/type").read().split('\n')[0]
+                    if os.path.exists("/sys/class/power_supply/" + d + "/status"):
+                        cat = os.popen("cat /sys/class/power_supply/" + d + "/status").read().split('\n')[0]
                     bat = os.popen("cat /sys/class/power_supply/" + d + "/capacity").read().split('\n')[0]
     res = res + (('"bat": "'+bat+'",\r\n').encode("utf-8"))
+    try:
+        cat = iftext[cat]
+    except Exception as e:
+        bat = bat
+    if cat == "0":
+        cat = bat
+    res = res + (('"cat": "'+cat+'",\r\n').encode("utf-8"))
             #    break
 
     res = res + catcpu(OS)

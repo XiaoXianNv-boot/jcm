@@ -89,7 +89,7 @@ def dpkginstall(name):
     pkg = ''
     if os.path.exists("/bin/apt"):
         if name == "update":
-            os.system("apt update")
+            os.system("#apt update")
         pkg = "apt install -y "
     elif os.path.exists("/bin/yum"):
         pkg = "yum install -y "
@@ -103,7 +103,7 @@ def dpkginstall(name):
     elif name == "update":
         print()
     elif name == (python.split('/')[-1] + "-dev"):
-        if pkg == "yum":
+        if pkg == "yum install -y ":
             os.system(pkg + "  " + python.split('/')[-1] + "-devel")
         else:
             os.system(pkg + "  " + name)
@@ -122,6 +122,8 @@ def pip(name):
     while run == 1:
         run = pipinstall(name,"  ")
         if run == 1:
+            run = pipinstall(name,"  --break-system-packages ")
+        if run == 1:
             run = pipinstall(name,"https://pypi.tuna.tsinghua.edu.cn/simple")
             if run == 1:
                 link = ''
@@ -133,16 +135,16 @@ def pip(name):
 
 def pipinstall(name,link):
     sh = os.popen("" + python + " -m pip list | " + bash + "grep '" + name + "'")
-    shell = sh.read().split(' ')
+    shell = sh.read().split("\n")[0].split(' ')
     if shell[0] != name:
         if link[0] == 'h':
             link = ' -i ' + link
-        os.system(bin + "" + python + " -m pip install --break-system-packages " + name + link)
+        os.system(bin + "" + python + " -m pip install " + name + link)
         sh = os.popen("" + python + " -m pip list | " + bash + "grep '" + name + "'")
-        shell = sh.read().split(' ')
+        shell = sh.read().split("\n")[0].split(' ')
         if shell[0] == name:
             pr = ''
-            for p in shell[:-1]:
+            for p in shell:
                 pr = pr + p
                 if pr == name:
                     pr = pr + ' '
@@ -152,7 +154,7 @@ def pipinstall(name,link):
             return 0
     else:
         pr = ''
-        for p in shell[:-1]:
+        for p in shell:
             pr = pr + p
             if pr == name:
                 pr = pr + ' '
@@ -238,23 +240,23 @@ if os.path.exists(".config/main/user") == False:
         os.mkdir(".config/main")
     print(text["init"])
     user = ''
-    if os.path.exists("/usr/bin/bashio"):
-        user = os.popen("bashio api.sh config user").read().split("\n")[0]
-        print(text["user"] + user)
-        user = user.encode("utf-8")
+    if len(sys.argv) == 5:
+        if sys.argv[1] == "hass":
+            print(sys.argv)
+            user = sys.argv[3].encode("utf-8")
     else:
         user = input(text["user"]).encode("utf-8")
     password = ''
-    if os.path.exists("/usr/bin/bashio"):
-        password = os.popen("bashio api.sh config password").read().split("\n")[0]
-        print(text["passwor"] + password)
-        password = password.encode("utf-8")
+    if len(sys.argv) == 5:
+        if sys.argv[1] == "hass":
+            print(sys.argv)
+            password = sys.argv[4].encode("utf-8")
     else:
         password = input(text["passwor"]).encode("utf-8")
     tools = imp.load_source('tools',"Tools/Tools.py")
     tools.newuser(user,password,b"0")
-    if OS_ == "Linux":
-        install = "L"
+    #if OS_ == "Linux":
+    install = "L"
 
 if os.path.exists(".config/main/port"):
     fs = open(".config/main/port", "rb")
@@ -272,6 +274,8 @@ OSS = OS.split(' ')
 if OS_ == "Windows":
     pip("psutil")
     pip("pywin32")
+    pip("requests")
+    pip("pythonnet")
 elif OS == "DSM":
     if os.path.exists("server/psutil.py") == False:
         os.system('cp lib/psutil.py ./server/')
@@ -284,11 +288,12 @@ elif OS_ == "Linux":
             t = 1
     if t == 0:
         dpkginstall("update")
-        dpkginstall(python.split('/')[-1] + "-pip ")
-        dpkginstall(python.split('/')[-1] + "-dev")
+        dpkginstall("python3" + "-pip ")
+        dpkginstall("python3" + "-dev")
         dpkginstall("gcc")
         dpkginstall("curl")
     pip("psutil")
+    pip("requests")
 
     OS_ = os.popen('if [ "$(stat -c %d:%i /)" != "$(stat -c %d:%i /proc/1/root/.)" ]; then   echo "chroot"; else   echo "Linux"; fi').read().split('\r')[0].split('\n')[0]
 
@@ -316,8 +321,17 @@ print("OS: " + OS)
 print("OS: " + OS_)
 print("port: " + str(port))
 print("theme: " + theme)
-for iipp in ipaddr.split('\r'):
-    print(iipp)
+try:
+    import psutil
+    print("Net: ")
+    net = psutil.net_if_addrs()
+    for i in net:
+        addrees = net[i]
+        addrees = addrees[0]
+        addrees = addrees.address
+        print('\t' + i + '\t' + addrees)
+except Exception as e:
+    print(e.args)
 
 info = {}
 info["Versino"] = Versino
@@ -329,7 +343,6 @@ info["port"] = port
 info["dev_name"] = dev_name
 info["theme"] = theme
 info["Headers"] = "Server: JCM/1.0\r\n"
-info["ip"] = iipp
 info['debug'] = False
 info['tmp'] = '/tmp/jcm'
 
@@ -347,6 +360,9 @@ if info['debug']:
 
 run = imp.load_source('run',"server/run.py")
 if install == "L":
+    if OS_ == "Linux":
         os.system("systemctl start jcm.service")
+    else:
+        os.system("dist/boot/boot.exe start")
 run.main(info)
 print("end")

@@ -9,11 +9,11 @@ import imp
 import hashlib
 import socket
 
-def main(new_client_socket,post,Headers,info,user):
+def main(new_client_socket,RUL_CS,post_data,Headers,info,user):
     link = ''
     path = ''
     res = '{}'
-    for i in post:
+    for i in RUL_CS:
         tmp = i.split('=')
         if tmp[0] == 'link':
             link = tmp[1]

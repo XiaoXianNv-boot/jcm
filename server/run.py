@@ -12,12 +12,24 @@ import psutil
 import traceback
 import threading
 
+def dectry(k,p):
+    #k = 'djq%5cu#-jeq15abg$z9_i#_w=$o88m!*alpbedlbat8cr74sd'
+    dec_str = ""
+    for i,j in zip(p.split("_")[:-1],k):
+        # i 为加密字符，j为秘钥字符
+        ttemp = ord(j)
+        temp = int(i)
+        temp = temp - ttemp
+        temp = chr(temp) # 解密字符 = (加密Unicode码字符 - 秘钥字符的Unicode码)的单字节字符
+        dec_str = dec_str+temp
+    return dec_str
+
 def rom(info):
     i=0
     retlist1=[]
     rom=0
     disks=1
-    if info['OS'] == "Linux":
+    '''if info['OS'] == "Linux":
         romsh = os.popen("LANG=en_US df -h")
         list = romsh.read().split("\n")
         ilen = len(list)
@@ -46,11 +58,14 @@ def rom(info):
                     rom = diskinfo
                 i=i+1
                 disks += 1
-    else:
-        list = psutil.disk_partitions()
+    else:'''
+    if True:
+        list = psutil.disk_partitions(False)
         ilen = len(list)
         while i < ilen:
             if list[i].mountpoint == "/boot":
+                i += 1
+            elif list[i].device == "/dev/zram1":
                 i += 1
             else:
                 try:
@@ -92,7 +107,7 @@ def httpserver_void(new_client_socket,RUL,RUL_CS,post_data,Headers,logs,info):
                     user = tmp5[1]
         if RUL == "/favicon.ico":
             if post_data == b'':
-                post = RUL_CS.split('&')
+                post = RUL_CS
             else:
                 post = post_data.decode("utf-8").split('&')
             httpserver.httppostfile(new_client_socket,"200","./web" + RUL,True,Headers,info)
@@ -101,6 +116,7 @@ def httpserver_void(new_client_socket,RUL,RUL_CS,post_data,Headers,logs,info):
                 ma = "200"
                 if RUL == "/login":
                     if Headers[0][:4] == "POST":
+                        import datetime
                         post = post_data.decode("utf-8").split('&')
                         name = ""
                         password = ""
@@ -130,9 +146,15 @@ def httpserver_void(new_client_socket,RUL,RUL_CS,post_data,Headers,logs,info):
                                     if fs_ == "":
                                         fs_ = fs_
                                     else:
-                                        session_ = session_ + fs_ + ("\n") 
                                         fs__ = fs_.split(',')
-                            import datetime
+                                        ifstr = (datetime.datetime.now()).strftime("%a, %d %b %Y %H:%M:%S GMT")
+                                        ifstr = (datetime.datetime.now()).strftime(" %d %b %Y ")
+                                        fistr = fs__[3][:0-len("23:40:54 GMT")]
+                                        if fistr == ifstr:
+                                            session_ = session_ + fs_ + ("\n") 
+                                        ifstr = (datetime.datetime.now()+datetime.timedelta(days=1)).strftime(" %d %b %Y ")
+                                        if fistr == ifstr:
+                                            session_ = session_ + fs_ + ("\n")  
                             cookie_date = (datetime.datetime.now()+datetime.timedelta(days=1)).strftime("%a, %d %b %Y %H:%M:%S GMT")
                             #time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.localtime(time.strptime("1","%d"))) 
                             
@@ -146,15 +168,24 @@ def httpserver_void(new_client_socket,RUL,RUL_CS,post_data,Headers,logs,info):
                                 user_write = ''
                                 for fs_ in fs_session:
                                     if fs_ == "sessinon":
-                                        fs_ = fs_
+                                        fs_rr = fs_rr
                                     else:
                                         if fs_ == "":
                                             fs_ = fs_
                                         else:
-                                            fs__ = fs_.split(",")
+                                            fs__ = fs_.split(',')
+                                            ifstr = (datetime.datetime.now()).strftime("%a, %d %b %Y %H:%M:%S GMT")
+                                            ifstr = (datetime.datetime.now()).strftime(" %d %b %Y ")
+                                            fistr = fs__[3][:0-len("23:40:54 GMT")]
+                                            if fistr == ifstr:
+                                                session_ = session_ + fs_ + ("\n") 
+                                            ifstr = (datetime.datetime.now()+datetime.timedelta(days=1)).strftime(" %d %b %Y ")
+                                            if fistr == ifstr:
+                                                session_ = session_ + fs_ + ("\n")  
                                 res = res + "set-Cookie: Cluster_management_Jiang=" + cok + "; SameSite=Lax; Expires=" + cookie_date
-                                fs_user = open(".config/sessino","a")
-                                fs_user.write(cok + "," + name + "," + cookie_date + "\n")
+                                fs_user = open(".config/sessino","wb")
+                                fs_user.write(fs_rr.decode('utf-8'))
+                                fs_user.write((cok + "," + name + "," + cookie_date + "\n").decode('utf-8'))
                                 fs_user.close()
                             else:
                                 res = res + "set-Cookie: Cluster_management_Jiang=" + cok + "; SameSite=Lax;"# Expires=" + cookie_date + "\r\n"
@@ -163,7 +194,97 @@ def httpserver_void(new_client_socket,RUL,RUL_CS,post_data,Headers,logs,info):
                         else:
                             res = "application/json" + res
                             httpserver.httppostchar(new_client_socket,"200","{\"data\":\"用户名或密码错误\"}".encode("utf-8"),res,Headers,info)
-                        
+                        return 0
+                elif RUL == "/login/dev":
+                    if Headers[0][:4] == "POST":
+                        post = post_data.decode("utf-8").split('&')
+                        a = ''
+                        b = ''
+                        c = ''
+                        for p in post:
+                            pp = p.split("=")
+                            if pp[0] == "a":
+                                a = pp[1]
+                            if pp[0] == "b":
+                                b = pp[1]
+                            if pp[0] == "c":
+                                c = pp[1]
+                        b = dectry("djq%5cu#-jeq15abg$z9_i#_w=$o88m!*alpbedlbat8cr74sd",b)
+                        b = dectry(time.strftime(" %Y-%m-%d %H:%M ", time.localtime()),b)
+                        a = dectry("djq%5cu#-jeq15abg$z9_i#_w=$o88m!*alpbedlbat8cr74sd",a)
+                        a = dectry(time.strftime(" %Y-%m-%d %H:%M ", time.localtime()),a)
+
+                        tools = imp.load_source("Tools/Tools.py","Tools/Tools.py")
+                        tools = tools.ifuser(a,b)
+
+                        res = ""
+                        if tools == "yes":
+                            import datetime
+                            cok = ''
+                            for x in range(32):
+                                cok = cok + random.choice("0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLLZXCVBNM")
+                            fs_rr = session_
+                            fs_session = fs_rr.split('\n')
+                            for fs_ in fs_session:
+                                if fs_ == "sessinon":
+                                    session_ = (fs_)
+                                    session_ = session_ + ("\n") 
+                                else:
+                                    if fs_ == "":
+                                        fs_ = fs_
+                                    else:
+                                        
+                                        fs__ = fs_.split(',')
+                                        ifstr = (datetime.datetime.now()).strftime("%a, %d %b %Y %H:%M:%S GMT")
+                                        ifstr = (datetime.datetime.now()).strftime(" %d %b %Y ")
+                                        fistr = fs__[3][:0-len("23:40:54 GMT")]
+                                        if fistr == ifstr:
+                                            session_ = session_ + fs_ + ("\n") 
+                                        ifstr = (datetime.datetime.now()+datetime.timedelta(days=1)).strftime(" %d %b %Y ")
+                                        if fistr == ifstr:
+                                            session_ = session_ + fs_ + ("\n")  
+                            cookie_date = (datetime.datetime.now()+datetime.timedelta(days=1)).strftime("%a, %d %b %Y %H:%M:%S GMT")
+                            #time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.localtime(time.strptime("1","%d"))) 
+                            
+                            session_ = session_ + cok + "," + a + "," + cookie_date + "\n"
+                            res = res + "set-Cookie: Cluster_management_Jiang=" + cok + "; SameSite=Lax;"# Expires=" + cookie_date + "\r\n"
+                            res = "application/json\r\n" + res
+                            httpserver.httppostchar(new_client_socket,"200",b"{\"data\":\"login\"}",res,Headers,info)
+                            return 0
+                elif RUL == "/assets/info":
+                        res = ''
+                        sent_now = psutil.net_io_counters().bytes_sent
+                        recv_now = psutil.net_io_counters().bytes_recv 
+                        sent = (sent_now - sent_before)/1024/(time.time()-ttime)  # 算出1秒后的差值 
+                        recv = (recv_now - recv_before)/1024/(time.time()-ttime)
+                        ttime=time.time()
+                        sent_before=sent_now
+                        recv_before=recv_now
+                        res += '"api": "1",'
+                        if info['OS'] == "Linux":
+                            res += '"safe": "--",'
+                        else:
+                            res += '"safe": "--",'
+                        res += '"cpu": "'+str(psutil.cpu_percent(None))+'",'
+                        res += '"ram": "'+str(psutil.virtual_memory().percent)+'",'
+                        res += '"rom": "'+rom(info)+'",'
+                        tx = ""
+                        rx = ""
+                        if sent < 1000:
+                            tx = '{0}KB/s'.format("%.2f"%sent)
+                        else:
+                            sent = sent / 1024
+                            tx = '{0}MB/s'.format("%.2f"%sent)
+                        if recv < 1000:
+                            rx = '{0}KB/s'.format("%.2f"%recv)
+                        else:
+                            recv = recv / 1024
+                            rx = '{0}MB/s'.format("%.2f"%recv)
+                        res += '"tx": "'+tx+'",'
+                        res += '"rx": "'+rx+'"'
+                        res += '}'
+                        httpserver.httppostchar(new_client_socket,"200",res.encode('utf-8'),"application/json",Headers,info)
+                        return 0
                 if RUL[:len("/assets")] != "/assets":
                     RUL = "/login.html"
                     for h in Headers:
@@ -176,10 +297,67 @@ def httpserver_void(new_client_socket,RUL,RUL_CS,post_data,Headers,logs,info):
             else:
                 my_file = "./web/" + info["theme"] + RUL
                 link = ''
-                for i in RUL_CS.split('&'):
+                _link = ''
+                __link = ''
+                for i in RUL_CS:
                     tmp = i.split('=')
-                if tmp[0] == 'link':
-                    link = tmp[1]
+                    if tmp[0] == 'link':
+                        link = tmp[1]
+                    else:
+                        if tmp[0] == '_link':
+                            __link =  tmp[1]
+                            _link += "link=" + tmp[1] + '\n'
+                        else:
+                            _link += i + '\n'
+                if (link != '') and (link != '127.0.0.1'):
+                    httpclient = imp.load_source("server/main/httpclient","server/main/httpclient.py")
+                    #httpclient.Client(ii[7],int(ii[19]),'/login/dev','')
+                    fs = open(".config/main/lits.json", "rb")
+                    hosts = fs.read().decode("utf-8").split('\n')
+                    for i in range(len(hosts)-1):
+                        ii = hosts[i].split('"')
+                        if ii[3] == link:
+                            dd = ''
+                            for ddd in RUL_CS:
+                                tmp = ddd.split('=')
+                                if tmp[0] == 'link':
+                                    link = tmp[1]
+                                    dd += '&_' + ddd 
+                                else:
+                                    dd += '&' + ddd 
+                            data = httpclient.Clientchar(ii[7],int(ii[19]),RUL + "?link=127.0.0.1" + dd,post_data)
+                            if data[0] == "401":
+                                httpclient.logindev(ii[3])
+                                data = httpclient.Clientchar(ii[7],int(ii[19]),RUL + "?link=127.0.0.1" + dd,post_data)
+                            if data[0] == "401":
+                                strr = {}
+                                strr["err"] = data[1].decode('utf-8')
+
+                                php = imp.load_source("server/main/php.py","server/main/php.py")
+                                data = php.php(new_client_socket,"post","/blink.php",user,Headers,info,strr)
+                                httpserver.httppostchar(new_client_socket,"401",data.encode("utf-8"),"text/html;charset=UTF-8",Headers,info)
+                                return 0
+                            if data[0] == "500":
+                                strr = {}
+                                strr["err"] = data[1].decode('utf-8')
+
+                                php = imp.load_source("server/main/php.py","server/main/php.py")
+                                data = php.php(new_client_socket,"post","/500.php",user,Headers,info,strr)
+                                httpserver.httppostchar(new_client_socket,"500",data.encode("utf-8"),"text/html;charset=UTF-8",Headers,info)
+                                return 0
+                            if data[0] == "502":
+                                strr = {}
+                                strr["err"] = data[1].decode('utf-8')
+
+                                php = imp.load_source("server/main/php.py","server/main/php.py")
+                                data = php.php(new_client_socket,"post","/500.php",user,Headers,info,strr)
+                                httpserver.httppostchar(new_client_socket,"500",data.encode("utf-8"),"text/html;charset=UTF-8",Headers,info)
+                                return 0
+                            httpserver.httppostchar(new_client_socket,data[0],data[1],data[2],Headers,info)
+                            return 0
+                #link = _link
+                if __link != '':
+                    RUL_CS = _link.split('\n')[:-1]
                 if os.path.isdir(my_file):
                     if os.path.isfile("./web/" + info["theme"] + RUL + "/index.php"):
                         RUL = RUL + "/index.php"
@@ -192,7 +370,7 @@ def httpserver_void(new_client_socket,RUL,RUL_CS,post_data,Headers,logs,info):
                     if tmp2[-1] == 'php':
                         php = imp.load_source("server/main/php.py","server/main/php.py")
                         if post_data == b'':
-                            post = RUL_CS.split('&')
+                            post = RUL_CS
                         else:
                             post = post_data.decode("utf-8").split('&')
                         data = php.php(new_client_socket,post,RUL,user,Headers,info,strr)
@@ -203,8 +381,43 @@ def httpserver_void(new_client_socket,RUL,RUL_CS,post_data,Headers,logs,info):
                 else:
                     if RUL == "/login":
                         httpserver.httppostchar(new_client_socket,"200",b"{\"data\":\"login\"}","application/json",Headers,info)
+                    elif RUL == "/login/dev":
+                        httpserver.httppostchar(new_client_socket,"200",b"{\"data\":\"login\"}","application/json",Headers,info)
                     elif RUL == "/token":
                         httpserver.httppostchar(new_client_socket,"200",b"{\"token\":\"\"}","application/json",Headers,info)
+                    elif RUL == "/assets/info":
+                        res = ''
+                        sent_now = psutil.net_io_counters().bytes_sent
+                        recv_now = psutil.net_io_counters().bytes_recv 
+                        sent = (sent_now - sent_before)/1024/(time.time()-ttime)  # 算出1秒后的差值 
+                        recv = (recv_now - recv_before)/1024/(time.time()-ttime)
+                        ttime=time.time()
+                        sent_before=sent_now
+                        recv_before=recv_now
+                        res += '"api": "1",'
+                        if info['OS'] == "Linux":
+                            res += '"safe": "--",'
+                        else:
+                            res += '"safe": "--",'
+                        res += '"cpu": "'+str(psutil.cpu_percent(None))+'",'
+                        res += '"ram": "'+str(psutil.virtual_memory().percent)+'",'
+                        res += '"rom": "'+rom(info)+'",'
+                        tx = ""
+                        rx = ""
+                        if sent < 1000:
+                            tx = '{0}KB/s'.format("%.2f"%sent)
+                        else:
+                            sent = sent / 1024
+                            tx = '{0}MB/s'.format("%.2f"%sent)
+                        if recv < 1000:
+                            rx = '{0}KB/s'.format("%.2f"%recv)
+                        else:
+                            recv = recv / 1024
+                            rx = '{0}MB/s'.format("%.2f"%recv)
+                        res += '"tx": "'+tx+'",'
+                        res += '"rx": "'+rx+'"'
+                        res += '}'
+                        httpserver.httppostchar(new_client_socket,"200",res.encode("utf-8"),"application/json",Headers,info)
                     elif RUL == "/main/info":
                         res = ''
                         if os.path.isfile(".config/main/lits.json"):
@@ -248,11 +461,12 @@ def httpserver_void(new_client_socket,RUL,RUL_CS,post_data,Headers,logs,info):
                                     res += '"tx": "'+tx+'",'
                                     res += '"rx": "'+rx+'"'
                                     res += '}'
+                                    #httpserver.httppostchar(new_client_socket,"200",res.encode('utf-8'),"application/json",Headers,info)
                                 else:
                                     url = "http://" + ii[7] + ":8889/assets/info"
                                     sh = imp.load_source("server/main/httpclient","server/main/httpclient.py")
                                     #cat,cdata = sh.Client(ii[7],int(ii[19]),"/assets/info")
-                                    cat,cdata = sh.Client(ii[7],int(ii[19]),'/login/dev','')
+                                    cat,cdata = sh.Client(ii[7],int(ii[19]),'/assets/info','')
                                     if cat == "200":
                                         try:
                                             #response = urllib.request.urlopen(url, timeout=1)
@@ -260,12 +474,12 @@ def httpserver_void(new_client_socket,RUL,RUL_CS,post_data,Headers,logs,info):
                                             #html = sh.Client("pi.lan",8889,"/assets/info")
                                             res += '"api": "1",'
                                             data = cdata.decode("utf-8").split('"')
-                                            res += '"safe": "'+data[3]+'",'
-                                            res += '"cpu": "'+data[7]+'",'
-                                            res += '"ram": "'+data[11]+'",'
-                                            res += '"rom": "'+data[15]+'",'
-                                            res += '"tx": "'+data[19]+'",'
-                                            res += '"rx": "'+data[23]+'"'
+                                            res += '"safe": "'+data[7]+'",'
+                                            res += '"cpu": "'+data[11]+'",'
+                                            res += '"ram": "'+data[15]+'",'
+                                            res += '"rom": "'+data[19]+'",'
+                                            res += '"tx": "'+data[23]+'",'
+                                            res += '"rx": "'+data[27]+'"'
                                             res += '}'
                                         except:
                                             res += '"api": "0",'
@@ -320,27 +534,17 @@ def httpserver_void(new_client_socket,RUL,RUL_CS,post_data,Headers,logs,info):
                     else:
                         my_file = "./server" + RUL + "/api.py"
                         if os.path.isfile(my_file):
-                            if post_data == b'':
-                                post = RUL_CS.split('&')
-                            else:
-                                rul_ = post_data.decode("utf-8").split('%')
-                                post_data = b''
-                                for y in range(len(rul_)):
-                                    if y == 0:
-                                        post_data = rul_[y].encode("utf-8")
-                                    elif y == (len(rul_)+1):
-                                        y=y 
-                                    else:
-                                        hex = rul_[y][:2]
-                                        charb = bytes.fromhex(hex)
-                                        post_data = post_data + charb
-                                        if len(rul_[y]) > 2:
-                                            post_data = post_data + rul_[y][2:].encode("utf-8")
-                                #RUL_CS = RUL_CS.decode("utf-8")
-                                post = post_data.decode("utf-8").split('&')
-                                
+                            #if post_data == b'':
+                            #    post = RUL_CS
+                            #else:
+                                #post_data = post_data.split(b'&')
+                                #for i in range(0,len(post_data)):
+                                #    post_data[i] = httpserver.http_to_char(post_data[i].decode("utf-8"))
+                                #    for i in 
+
+                                #post = post_data
                             sh = imp.load_source(RUL + "/api.py",my_file)
-                            sh.main(new_client_socket,post,Headers,info,user)
+                            sh.main(new_client_socket,RUL_CS,post_data,Headers,info,user)
                         else:
                             strr = {}
                             strr["err"] = '404'
@@ -399,9 +603,9 @@ def logsprnts(live,info,data):
                 os.system("./error.sh '" + data.decode("utf-8") + "'")
             except Exception as e:
                 print()
-        print(live,end=' ')
+        print("\033[31m " + live,end=' ')
         print(data,end='')
-        print('')
+        print('\033[0m')
     lock.release()
 def logsprnt(live,info,data):
     t = threading.Thread(target=logsprnts, args=(live,info,data))
@@ -478,3 +682,4 @@ def main(info):
         tcp_server_socket.close()
         run = imp.load_source('run',"server/run.py")
         run.main(info)
+        #os.system("run.sh || run.bat")

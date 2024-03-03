@@ -9,10 +9,11 @@ import imp
 import hashlib
 import socket
 
-def main(new_client_socket,post,Headers,info,user):
+def main(new_client_socket,RUL_CS,post_data,Headers,info,user):
     link = ''
     path = ''
     res = '{}'
+    post = RUL_CS
     for i in post:
         tmp = i.split('=')
         if tmp[0] == 'link':
@@ -33,8 +34,8 @@ def main(new_client_socket,post,Headers,info,user):
     yuan = os.listdir(".config/APP/data/")
     yuan.sort(reverse=True)
     for y in yuan:
-        fs = open(".config/APP/data/" + y,'r')
-        yrul = fs.read().split('\n')[1:-1]
+        fs = open(".config/APP/data/" + y,'rb')
+        yrul = fs.read().decode("utf-8").split('\n')[1:-1]
         for i in yrul:
             i = i.split(',')
             name = i[0].split('"')[3]

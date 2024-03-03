@@ -1,7 +1,10 @@
 #!/bin/bash
 
 export gitdir=https://github.com/XiaoXianNv-boot/jcm/raw/master
+export gitdir=https://github.com/XiaoXianNv-boot/jcm/releases/download/
 export mirrordir=http://jiang144.i234.me/data/jcm
+#export dir=https://github.com/XiaoXianNv-boot/jcm/releases/download/Preview
+export dir=http://jiang144.i234.me/data/jcm
 
 if [ ! -e /usr/bin/curl ]; then
     if [ -e /bin/apt ]; then
@@ -47,7 +50,6 @@ if [ ! -e /bin/python3 ]; then
         fi
     fi
 fi
-
 
 mkdir -p jcm_install
 cd jcm_install

@@ -52,8 +52,8 @@ def install(new_client_socket,post,Versino,Headers,info):
         yuan = os.listdir(".config/APP/data/")
         yuan.sort(reverse=True)
         for y in yuan:
-            fs = open(".config/APP/data/" + y,'r')
-            yrul = fs.read().split('\n')[1:-1]
+            fs = open(".config/APP/data/" + y,'rb')
+            yrul = fs.read().decode("utf-8").split('\n')[1:-1]
             for i in yrul:
                 i = i.split(',')
                 name = i[0].split('"')[3]
@@ -443,8 +443,8 @@ def update(new_client_socket,post,Versino,Headers,info):
         if os.path.isdir(".config/APP/pkg/" + y):
             for i in range(len(os.listdir(".config/APP/pkg/" + y))):
                 if os.path.exists(".config/APP/pkg/" + y + '/' + str(i)):
-                    fs = open(".config/APP/pkg/" + y + '/' + str(i),'r')
-                    yrul = fs.read().split('\n')
+                    fs = open(".config/APP/pkg/" + y + '/' + str(i),'rb')
+                    yrul = fs.read().decode("utf-8").split('\n')
                     for yyrul in yrul:
                         if yyrul != '':
                             prin(new_client_socket,(y + '[' + str(i)+ ']\t').encode("utf-8"))
@@ -493,8 +493,8 @@ def update(new_client_socket,post,Versino,Headers,info):
                                 fs.close()
                                 break
         else:
-            fs = open(".config/APP/pkg/" + y,'r')
-            yrul = fs.read().split('\n')
+            fs = open(".config/APP/pkg/" + y,'rb')
+            yrul = fs.read().decode("utf-8").split('\n')
             for yyrul in yrul:
                 if yyrul != '':
                     prin(new_client_socket,(y + '\t').encode("utf-8"))

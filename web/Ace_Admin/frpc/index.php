@@ -631,18 +631,19 @@
                             var reg = "";
                             var link = "";
                             for (i = 0; i < data.datafo; i++) {
-                                if (data.data[i].name == document.getElementById('name').value)
-                                document.getElementById('h3text').innerHTML  = "edit";
-                                document.getElementById('name').value  = data.data[i].name;
-                                document.getElementById('type').value  = data.data[i].type;;
-                                document.getElementById('local_ip').value  = data.data[i].local_ip;;
-                                document.getElementById('local_port').value  = data.data[i].local_port;;
-                                document.getElementById('remote_port').value  = data.data[i].remote_port;;
-                                document.getElementById('name').disabled  = false;
-                                document.getElementById('type').disabled  = false;
-                                document.getElementById('local_ip').disabled  = false;
-                                document.getElementById('local_port').disabled  = false;
-                                document.getElementById('remote_port').disabled  = false;
+                                if (data.data[i].name == document.getElementById('name').value){
+                                    document.getElementById('h3text').innerHTML  = "edit";
+                                    document.getElementById('name').value  = data.data[i].name;
+                                    document.getElementById('type').value  = data.data[i].type;;
+                                    document.getElementById('local_ip').value  = data.data[i].local_ip;;
+                                    document.getElementById('local_port').value  = data.data[i].local_port;;
+                                    document.getElementById('remote_port').value  = data.data[i].remote_port;;
+                                    document.getElementById('name').disabled  = false;
+                                    document.getElementById('type').disabled  = false;
+                                    document.getElementById('local_ip').disabled  = false;
+                                    document.getElementById('local_port').disabled  = false;
+                                    document.getElementById('remote_port').disabled  = false;
+                                }
                             }
                         }
                     }

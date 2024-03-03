@@ -53,7 +53,12 @@ def websockrx(new_client_socket):
         return datas,Opcode
 def websockfs(new_client_socket,data):
     data = b'' + data
-    if len(data.decode("utf-8")) > 101:
+    lens = 0
+    try:
+        lens = len(data.decode("utf-8"))
+    except Exception as e:
+        lens = len(data)
+    if lens > 101:
         data = data.decode("utf-8")
         cd = 0
         while cd != len(data):
@@ -73,6 +78,42 @@ def websockfs(new_client_socket,data):
         datab = b'12'
         if len(data) < 126:
             datab = bytes.fromhex('82')
+            len_ = hex(len(data))[2:]
+            if len(len_) == 1:
+                len_ = '0' + len_
+            datab += bytes.fromhex(len_)
+            new_client_socket.send(datab)
+            new_client_socket.send(data)
+def websockfsstr(new_client_socket,data):
+    data = b'' + data
+    datalen = len(data)
+    if datalen > 101:
+        data = data.decode("utf-8")
+        datalen = ''
+        for i in data:
+            datalen += i
+            if len(datalen.encode("utf-8")) > 90:
+                websockfsstr(new_client_socket,datalen.encode("utf-8"))
+                datalen = ''
+        websockfsstr(new_client_socket,datalen.encode("utf-8"))
+        #cd = 0
+        #while cd != len(data):
+        #    if len(data) < (cd + 100):
+        #        if cd == 0:
+        #            websockfsstr(new_client_socket,data[cd:cd + 100].encode("utf-8"))
+        #        else:
+        #            websockfsstr(new_client_socket,b'' + data[cd:cd + 100].encode("utf-8"))
+        #        cd = len(data)
+        #    else:
+        #        if cd == 0:
+        #            websockfsstr(new_client_socket,data[cd:cd + 100].encode("utf-8"))
+        #        else:
+        #            websockfsstr(new_client_socket,b'' + data[cd:cd + 100].encode("utf-8"))
+        #        cd = cd + 100
+    else:
+        datab = b'12'
+        if len(data) < 126:
+            datab = bytes.fromhex('81')
             len_ = hex(len(data))[2:]
             if len(len_) == 1:
                 len_ = '0' + len_
@@ -111,11 +152,44 @@ def websockend(new_client_socket,data):
             datab += bytes.fromhex('E8')
             new_client_socket.send(datab)
     time.sleep(0.05)
+    new_client_socket.close()
+def websockendstr(new_client_socket,data):
+    #websockfs(new_client_socket,b'2{"d":"disableLeaveAlert"}')
+    data = b'' + data
+    if len(data.decode("utf-8")) > 101:
+        data = data.decode("utf-8")
+        cd = 0
+        while cd != len(data):
+            websockfsstr(new_client_socket,data[cd:cd + 100].encode("utf-8"))
+            if len(data) < (cd + 100):
+                cd = len(data)
+            else:
+                cd = cd + 100
+    else:
+        datab = b'12'
+        if len(data) < 126:
+            datab = bytes.fromhex('81')
+            #datab += bytes.fromhex('03')
+            #datab += bytes.fromhex('30')
+            #datab += bytes.fromhex('0D')
+            #datab += bytes.fromhex('0A')
+            len_ = hex(len(data))[2:]
+            if len(len_) == 1:
+                len_ = '0' + len_
+            datab += bytes.fromhex(len_)
+            new_client_socket.send(datab)
+            new_client_socket.send(data)
+            datab = bytes.fromhex('88')
+            datab += bytes.fromhex('02')
+            datab += bytes.fromhex('03')
+            datab += bytes.fromhex('E8')
+            new_client_socket.send(datab)
+    time.sleep(0.05)
 def websocktime(new_client_socket):
     datab = bytes.fromhex('89')
     datab += bytes.fromhex('00')
     new_client_socket.send(datab)
-    time.sleep(0.2)
+    time.sleep(0.01)
     return websockrx(new_client_socket)
 
 def websockinit(new_client_socket,Headers,info):
@@ -143,11 +217,12 @@ def websockinit(new_client_socket,Headers,info):
     he = info["Headers"]
     he += "Upgrade: websocket\r\n"
     he += "Connection: Upgrade\r\n"
+    he += "Connection: close\r\n"
     he += "Sec-WebSocket-Accept: " + SecWebSocketAccept + "\r\n"
     if SecWebSocketProtocol != '':
         he += "Sec-Websocket-Protocol: " + SecWebSocketProtocol + "\r\n"
     he = he + '\r\n'
-    he = "HTTP/1.1 101 Switching Protocols \r\n" + he
+    he = "HTTP/1.0 101 Switching Protocols \r\n" + he
     new_client_socket.send(he.encode("utf-8"))
     if SecWebSocketProtocol != '':
         #time.sleep(0.5)
@@ -219,11 +294,11 @@ def tcplink(sock, addr , logs, info,void):
             l = len(l) 
             if recv_tcp[:4] == b'POST':
                 if l > 1:
-                    os.system("./error.sh '" + "POST" + "'")
+                    #os.system("./error.sh '" + "POST" + "'")
                     recv_data = recv_tcp.split(b'\r\n\r\n')
                     Headers = recv_data[0].decode("utf-8")
                     Headers = Headers.split('\r\n')
-                    os.system("./error.sh '" + catHeaders("Content-Type",Headers) + "'")
+                    #os.system("./error.sh '" + catHeaders("Content-Type",Headers) + "'")
                     if catHeaders("Content-Type",Headers)[:len("application/x-www-form-urlencoded")] == "application/x-www-form-urlencoded":
                         os.system("./error.sh '" + catHeaders("Transfer-Encoding",Headers) + "'")
                         if catHeaders("Transfer-Encoding",Headers)[:len("Transfer-Encoding")] == "chunked":
@@ -268,9 +343,9 @@ def tcplink(sock, addr , logs, info,void):
                         break
 
 
-#36\r\n
-#name=admin password=admin type=username checkbox=false
-#\r\n0\r\n\r\n
+    #36\r\n
+    #name=admin password=admin type=username checkbox=false
+    #\r\n0\r\n\r\n
                 else:
                     recv_tcp += new_client_socket.recv(8192)
             else:
@@ -298,9 +373,13 @@ def tcplink(sock, addr , logs, info,void):
     RUL_CS = Headers[0].split(' ')
     RUL_CS = RUL_CS[1].split('?')
     if len(RUL_CS) == 1:
-        RUL_CS = ''
+        RUL_CS = 'link=',''
     else:
-        RUL_CS = http_to_char(RUL_CS[1])
+        RUL_CS = RUL_CS[1]
+        RUL_CS = RUL_CS.split("&")
+        for i in range(0,len(RUL_CS)):
+            RUL_CS[i] = http_to_char(RUL_CS[i])
+        #RUL_CS = http_to_char(RUL_CS[1])
     pr = (time.strftime("I %Y-%m-%d %H:%M:%S ", time.localtime()).encode("utf-8"))
     pr += ((str(client_addr) + ' ' + '' + Headers[0].split(' ')[1]).encode("utf-8"))
     logs("info",info,pr + b"\r\n")

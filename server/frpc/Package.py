@@ -84,7 +84,7 @@ def remove():
 def out():
     os.system("cp -rf web/Ace_Admin/" + name + " .out/web/Ace_Admin/")
     os.system("cp -rf server/" + name + " .out/server/")
-    os.system("#cp -rf lib/frp .out/server/frpc/lib")
+    os.system("cp -rf lib/frp .out/server/frpc/lib")
     
     rm('.out/server/','__pycache__')
     
@@ -99,17 +99,25 @@ def rm(dir,name):
                 rm(dir + p + '/',name)
 def info():
     data = {}
+    #文件夹名称
     data["Package"] = name
+    #首选名称
     data["names"] = "frpc"
+    #多国语言翻译
     data["namei"] = {}
     data["namei"]["zh-CN"] = "frpc".encode("utf-8")
-
+    #版本
     data["Version"] = Version
+    #依赖
     data["Depends"] = "main"
+    #License
     data["License"] = "GPL-2.0"
+    #首选解释
     data["Description"] = "frp内网穿透客户端"
+    #多国语言翻译
     data["Descriptions"] = {}
     data["Descriptions"]["zh-CN"] = "frp内网穿透客户端".encode("utf-8")
+    #库名称
     data["issued"] = "pkg"
 
     return data

@@ -10,19 +10,19 @@ import hashlib
 import socket
 import threading
 
-def run(info):
+def run(info,no):
     os.system("timeout /t 30 && shutdown -h")
 
 def poweroff(info):
-    t = threading.Thread(target=run, args=(info))
+    t = threading.Thread(target=run, args=(info,""))
     t.start()
     return "30S shutdown -h"
 
-def main(new_client_socket,post,Headers,info,user):
+def main(new_client_socket,RUL_CS,post_data,Headers,info,user):
     link = ''
     path = ''
     res = '{}'
-    for i in post:
+    for i in RUL_CS:
         tmp = i.split('=')
         if tmp[0] == 'link':
             link = tmp[1]

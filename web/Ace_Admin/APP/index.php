@@ -377,6 +377,7 @@
                             location.reload();
                         } else {
                             var data = JSON.parse(cathttp);
+                            jcminit();
                             str = '<tr>'
                             str += '  <th class="detail-col" >'
                             str += '    <label class="pos-rel">'

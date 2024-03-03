@@ -8,20 +8,25 @@ import time
 import imp
 import hashlib
 import socket
+import threading
 
-def run(info):
-    os.system("sleep 30 && reboot")
+def run(info,no):
+    if os.path.exists("/sbin/reboot"): 
+        time.sleep(30)
+        os.system('/sbin/reboot')
+    else:
+        os.system("shutdown -r -t 30")
 
 def reboot(info):
-    t = threading.Thread(target=run, args=(info))
+    t = threading.Thread(target=run, args=(info,""))
     t.start()
     return "30S reboot"
 
-def main(new_client_socket,post,Headers,info,user):
+def main(new_client_socket,RUL_CS,post_data,Headers,info,user):
     link = ''
     path = ''
     res = '{}'
-    for i in post:
+    for i in RUL_CS:
         tmp = i.split('=')
         if tmp[0] == 'link':
             link = tmp[1]

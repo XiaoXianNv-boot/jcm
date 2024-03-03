@@ -46,7 +46,7 @@ function jcminit() {
                 str += '<ul class="submenu">';
                 for (j = 1; j < Object.keys(data.data[i].data).length; j++) {
                     if (r[2] == data.data[i].name) {
-                        if (window.location.pathname + '?' == data.data[i].data[j - 1].link) {
+                        if (window.location.pathname + '?' == ('/' + data.data[i].data[j - 1].link)) {
                             str += '<li class="active">';
                         } else {
                             str += '<li class="">';

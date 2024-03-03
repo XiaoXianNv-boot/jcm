@@ -1,11 +1,14 @@
+
+
 window.onload = function () {
     infoupdata_();
 }
-window.setInterval(infoupdata, 10000);
+window.setInterval(infoupdata, 5000);
 
 function infoupdata_(){
     const cpuHttp = new XMLHttpRequest();
-    cpuHttp.open("GET", 'info/info');
+    var rul = catrul('info/info?');
+    cpuHttp.open("GET", rul);
     cpuHttp.send();
     cpuHttp.onreadystatechange = function() {
         if(cpuHttp.readyState == 4 && cpuHttp.status == 200){
@@ -249,7 +252,8 @@ function infoupdata_(){
 
 function infoupdata(){
     const cpuHttp = new XMLHttpRequest();
-    cpuHttp.open("GET", 'info/info');
+    var rul = catrul('info/info?');
+    cpuHttp.open("GET", rul);
     cpuHttp.send();
     cpuHttp.onreadystatechange = function() {
         if(cpuHttp.readyState == 4 && cpuHttp.status == 200){
@@ -330,7 +334,7 @@ function infoupdata(){
                     //var barColor = 'brown';//$('#' + servername).data('color');// || (!$box.hasClass('infobox-dark') ? $box.css('color') : 'rgba(255,255,255,0.95)');
                     $('#' + servername).data('easyPieChart').update(data.bat).options.barColor = '#3983C2';
                 }
-                document.getElementById(servername + 'text').innerHTML =   "BAT";
+                document.getElementById(servername + 'text').innerHTML =  data.cat;
                 document.getElementById(servername + 't').innerHTML = data.bat + "";
             }
 

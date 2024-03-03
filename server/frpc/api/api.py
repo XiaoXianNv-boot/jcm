@@ -30,9 +30,10 @@ def setinfo(conf,section,option,value):
     conf.set(section, option, value)
             
 
-def main(new_client_socket,post,Headers,info,user):
+def main(new_client_socket,RUL_CS,post_data,Headers,info,user):
     type = ""
     res = ""
+    post = RUL_CS
     for i in post:
         tmp = i.split('=')
         if tmp[0] == 'type':

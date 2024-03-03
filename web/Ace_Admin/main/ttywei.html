@@ -575,18 +575,29 @@
                 onSocketClose(e) {
                     console.log(`[ttyd] websocket connection closed with code: ${e.code}`);
                     const {refreshToken: t, connect: i, doReconnect: s, overlayAddon: r} = this;
-                    if ("1" == null)
-                        r.showOverlay("Reconnecting..."),
-                        t().then(i);
-                    else {
+                    if (/*r.showOverlay("Connection Closed"),*/
+                    this.dispose(),
+                    1e3 !== e.code && s){
                         const {terminal: e} = this
-                          , s = e.onKey(e=>{
+                            , s = e.onKey(e=>{
                             "Enter" === e.domEvent.key && (s.dispose(),
                             r.showOverlay("Reconnecting..."),
                             t().then(i))
                         }
                         );
-                        r.showOverlay("Press ⏎ to Reconnect")
+                        //r.showOverlay("Press ⏎ to Reconnect")
+                        this.writeData("Press ⏎ to Reconnect");
+                    }
+                    else {
+                        const {terminal: e} = this
+                            , s = e.onKey(e=>{
+                            "Enter" === e.domEvent.key && (s.dispose(),
+                            r.showOverlay("Reconnecting..."),
+                            t().then(i))
+                        }
+                        );
+                        //r.showOverlay("Press ⏎ to Reconnect")
+                        this.writeData("Press ⏎ to Reconnect");
                     }
                 }
                 onSocketData(e) {

@@ -103,10 +103,11 @@ function sysexit(){\r\n\
         </p>'
     res += poskuan("系统控制",data,"4")
     return res
-def main(new_client_socket,post,Headers,info,user):
+def main(new_client_socket,RUL_CS,post_data,Headers,info,user):
     link = ''
     path = ''
     res = '{}'
+    post = RUL_CS
     for i in post:
         tmp = i.split('=')
         if tmp[0] == 'link':
@@ -154,6 +155,13 @@ function jcmexit(){\r\n\
         </p>'
     res = poskuan("重启面板",data,"3")
     res = resys(res,info)
+    if info['debug']:
+        res += poskuan("DEBUG",'<p>\r\n\
+            <button class="btn btn-sm btn-success" onclick="jcmreset();return false;">DEBUG</button>\r\n\
+            <script type="text/javascript">\r\n\
+                \
+            </script>\
+        </p>',"2")
     strr = {}
     strr["data"] = res
     httpserver = imp.load_source("server/main/httpserver.py","server/main/httpserver.py")

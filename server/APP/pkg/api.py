@@ -4,8 +4,9 @@
 import imp
 import traceback
 
-def main(new_client_socket,post,Headers,info,user):
+def main(new_client_socket,RUL_CS,post_data,Headers,info,user):
     Versino = "V1.0"
+    post = RUL_CS
     httpserver = imp.load_source("server/main/httpserver.py","server/main/httpserver.py")
     httpserver.websockinit(new_client_socket,Headers,info)
     data = httpserver.websockrx(new_client_socket)

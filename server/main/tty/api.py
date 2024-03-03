@@ -6,7 +6,8 @@ import os
 import imp
 import hashlib
 
-def main(new_client_socket,post,Headers,info,user):
+def main(new_client_socket,RUL_CS,post_data,Headers,info,user):
+    post = RUL_CS
     if len(post) == 3:
         link = ''
         sw = ''

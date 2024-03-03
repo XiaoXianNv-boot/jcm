@@ -8,6 +8,19 @@ import time
 import imp
 import hashlib
 import socket
+import threading
+
+def run(info,no):
+    if os.path.exists("/sbin/halt"): 
+        time.sleep(30)
+        os.system('/sbin/halt')
+    else:
+        os.system("sleep 30 && halt")
+
+def poweroff(info):
+    t = threading.Thread(target=run, args=(info,""))
+    t.start()
+    return "30S halt"
 
 def main(new_client_socket,RUL_CS,post_data,Headers,info,user):
     link = ''
@@ -20,9 +33,7 @@ def main(new_client_socket,RUL_CS,post_data,Headers,info,user):
         if tmp[0] == 'path':
             path = tmp[1]
 
-    res = '{"data":"OK"}'
-    run = imp.load_source('run',"server/run.py")
-    run.shutdown("reset")
+    res = '{"data":"' + poweroff(info) + '"}'
 
 
     httpserver = imp.load_source("server/main/httpserver.py","server/main/httpserver.py")

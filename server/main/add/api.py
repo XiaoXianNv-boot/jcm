@@ -9,6 +9,16 @@ import hashlib
 import binascii
 import socket
 
+# 加密
+def enctry(k,s):
+    #k =  'djq%5cu#-jeq15abg$z9_i#_w=$o88m!*alpbedlbat8cr74sd'
+    encry_str = ""
+    for i,j in zip(s,k):
+        # i为字符，j为秘钥字符
+        temp = str(ord(i)+ord(j))+'_' # 加密字符 = 字符的Unicode码 + 秘钥的Unicode码
+        encry_str = encry_str + temp
+    return encry_str
+
 def Client(ip,dk,dir,post):
     try:
         if dk == "":
@@ -58,7 +68,9 @@ def Client(ip,dk,dir,post):
                     hhhh = hhh[1].split(b';')
                     fs = open(".config/main/cookie","ab")
                     fs.write(ip.encode('utf-8'))
-                    fs.write(b':')
+                    fs.write(b'\t')
+                    fs.write(str(dk).encode('utf-8'))
+                    fs.write(b'\t')
                     fs.write(hhhh[0])
                     fs.write(b'\n')
                     fs.close()
@@ -74,13 +86,14 @@ def Client(ip,dk,dir,post):
         return "404",e.args[-1].encode("utf-8")
     socket.setdefaulttimeout(0)
 
-def main(new_client_socket,post,Headers,info,user):
+def main(new_client_socket,RUL_CS,post_data,Headers,info,user):
     res = ''
     devname = ''
     devrul = ''
     devuser = ''
     devpassword = ''
     devport = ''
+    post = post_data.decode("utf-8").split("&")
     for i in post:
         tmp = i.split('=')
         if tmp[0] == 'devname':
@@ -97,23 +110,44 @@ def main(new_client_socket,post,Headers,info,user):
 
     obj = hashlib.md5()
     md = devuser
-    md += time.strftime("I %Y-%m-%d %H:%M ", time.localtime())
+    md += time.strftime(" %Y-%m-%d %H:%M ", time.localtime())
     obj.update((md).encode('utf-8'))
     a = obj.hexdigest()
+    a = enctry("djq%5cu#-jeq15abg$z9_i#_w=$o88m!*alpbedlbat8cr74sd",enctry(time.strftime(" %Y-%m-%d %H:%M ", time.localtime()),devuser))
     if info['debug']:
         print(md)
         print(a)
     obj = hashlib.md5()
     md = binascii.hexlify(hashlib.pbkdf2_hmac("sha256",devpassword.encode("utf-8"),b"jcm",1000)).decode()
-    md += time.strftime("I %Y-%m-%d %H:%M ", time.localtime())
+    md += time.strftime(" %Y-%m-%d %H:%M ", time.localtime())
     obj.update((md).encode('utf-8'))
     b = obj.hexdigest()
+    b = enctry("djq%5cu#-jeq15abg$z9_i#_w=$o88m!*alpbedlbat8cr74sd",enctry(time.strftime(" %Y-%m-%d %H:%M ", time.localtime()),devpassword))
     if info['debug']:
         print(md)
         print(b)
-    cat,cdata = Client(devrul,int(devport),'/login/dev','a=' + a + '&b=' + b)
+    c = enctry("djq%5cu#-jeq15abg$z9_i#_w=$o88m!*alpbedlbat8cr74sd",enctry(time.strftime(" %Y-%m-%d %H:%M ", time.localtime()),devname))
+    cat,cdata = Client(devrul,int(devport),'/login/dev','a=' + a + '&b=' + b + '&c=' + c)
     if cat == '200':
         cdata = cdata.decode('utf-8')
+        if cdata == '{"data":"login"}':
+            cdata = '{"name": "'
+            cdata += devname
+            cdata +=  '","host": "'
+            cdata += devrul
+            cdata += '","user": "'
+            cdata += devuser
+            cdata +=  '","password": "'
+            cdata += enctry(devname,devpassword)
+            cdata += '","port": "'
+            cdata += devport
+            cdata += '"},\n'
+            fs = open(".config/main/lits.json","ab")
+            fs.write(cdata.encode("utf-8"))
+            fs.close()
+            res += "{\"data\":\"添加成功\"}"
+    elif cat == '401':
+        res += "{\"data\":\"用户名或密码错误\"}"
     elif cat == '404':
         data = os.popen('ping ' + devrul + ' -c 1 | grep icmp_seq').read()
         if len(data.split('icmp_seq=1 ttl=64')) == 2:
@@ -124,7 +158,7 @@ def main(new_client_socket,post,Headers,info,user):
             cdata += '","user": "'
             cdata += devuser
             cdata +=  '","password": "'
-            cdata += binascii.hexlify(hashlib.pbkdf2_hmac("sha256",devpassword.encode("utf-8"),b"jcm",1000)).decode()
+            cdata += enctry(devname,devpassword)
             cdata += '","port": "'
             cdata += devport
             cdata += '"},\n'
@@ -139,13 +173,32 @@ def main(new_client_socket,post,Headers,info,user):
                 res += "{\"data\":\"连接超时\"}"
             else:
                 res += "{\"data\":\"" + cdata + "\"}"
+    
     else:
-        if cdata == b'getaddrinfo failed':
-            res += "{\"data\":\"找不到主机\"}"
-        elif cdata == b'timed out':
-            res += "{\"data\":\"连接超时\"}"
+        data = os.popen('ping ' + devrul + ' -c 1 | grep icmp_seq').read()
+        if len(data.split('icmp_seq=1 ttl=64')) == 2:
+            cdata = '{"name": "'
+            cdata += devname
+            cdata +=  '","host": "'
+            cdata += devrul
+            cdata += '","user": "'
+            cdata += devuser
+            cdata +=  '","password": "'
+            cdata += enctry(devname,devpassword)
+            cdata += '","port": "'
+            cdata += devport
+            cdata += '"},\n'
+            fs = open(".config/main/lits.json","ab")
+            fs.write(cdata.encode("utf-8"))
+            fs.close()
+            res += "{\"data\":\"添加成功\"}"
         else:
-            res += "{\"data\":\"" + cdata.decode("utf-8") + "\"}"
+            if cdata == b'getaddrinfo failed':
+                res += "{\"data\":\"找不到主机\"}"
+            elif cdata == b'timed out':
+                res += "{\"data\":\"连接超时\"}"
+            else:
+                res += "{\"data\":\"" + cdata + "\"}"
     
     httpserver = imp.load_source("server/main/httpserver.py","server/main/httpserver.py")
     httpserver.httppostchar(new_client_socket,"200",res.encode("utf-8"),"application/json",Headers,info)
