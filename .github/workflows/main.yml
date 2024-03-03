@@ -1,0 +1,28 @@
+name: 生成包和二进制文件
+
+#run-name: ${{ github.actor }} is learning GitHub Actions
+
+on: [push]
+
+jobs:
+  生成包和二进制文件:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 获取存储库
+        uses: actions/checkout@v4
+      - name: 安装依赖
+        run: apt install -y p7zip-full && sudo dpkg --add-architecture i386 && sudo mkdir -pm755 /etc/apt/keyrings && sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key && sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources &&  sudo apt update && sudo apt install -y --install-recommends winehq-stable
+      - name: 生成包
+        run: python3 actions.py
+      - name: 上传包 pkg
+        uses: softprops/action-gh-release@v1
+        if: true
+        with:
+          tag_name: pkg
+          name: pkg
+          body: pkg 软件包
+          draft: false
+          prerelease: false
+          files: |
+              .jcm/pkg/*
+           
