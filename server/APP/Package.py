@@ -48,13 +48,20 @@ def rm(dir,name):
             else:
                 rm(dir + p + '/',name)
 def info():
-    print("Package:" + name)
-    print("name:应用商店")
-    print("Version:" + Version)
-    print("Depends:main")
-    print("License:GPL-2.0")
-    print("Description:软件的应用商店")
-    print("issued:pkg")
+    data = {}
+    data["Package"] = name
+    data["names"] = "应用商店"
+    data["namei"] = {}
+    data["namei"]["zh-CN"] = "应用商店".encode("utf-8")
+
+    data["Version"] = Version
+    data["Depends"] = "main"
+    data["License"] = "GPL-2.0"
+    data["Description"] = "软件的应用商店"
+    data["Descriptions"] = {}
+    data["Descriptions"]["zh-CN"] = "软件的应用商店".encode("utf-8")
+    data["issued"] = "pkg"
+    return data
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:

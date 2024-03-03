@@ -26,3 +26,15 @@ jobs:
           files: |
               .jcm/pkg/*
            
+      - name: 上传包 install
+        uses: softprops/action-gh-release@v1
+        if: true
+        with:
+          tag_name: install
+          name: install
+          body: install 软件包
+          draft: false
+          prerelease: false
+          files: |
+              .jcm/install/*
+           

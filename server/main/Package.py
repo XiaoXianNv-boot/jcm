@@ -86,13 +86,29 @@ def rm(dir,name):
             else:
                 rm(dir + p + '/',name)
 def info():
-    print("Package:" + name)
-    print("name:首页")
-    print("Version:V0.2")
-    print("Depends:main")
-    print("License:GPL-2.0")
-    print("Description:此软件包包含基本文件系统和系统脚本")
-    print("issued:pkg")
+    data = {}
+    #文件夹名称
+    data["Package"] = name
+    #首选名称
+    data["names"] = "首页"
+    #多国语言翻译
+    data["namei"] = {}
+    data["namei"]["zh-CN"] = "首页".encode("utf-8")
+    #版本
+    data["Version"] = Version
+    #依赖
+    data["Depends"] = "main"
+    #License
+    data["License"] = "GPL-2.0"
+    #首选解释
+    data["Description"] = "此软件包包含基本文件系统和系统脚本"
+    #多国语言翻译
+    data["Descriptions"] = {}
+    data["Descriptions"]["zh-CN"] = "此软件包包含基本文件系统和系统脚本".encode("utf-8")
+    #库名称
+    data["issued"] = "pkg"
+
+    return data
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:

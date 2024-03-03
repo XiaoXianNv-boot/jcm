@@ -98,13 +98,21 @@ def rm(dir,name):
             else:
                 rm(dir + p + '/',name)
 def info():
-    print("Package:" + name)
-    print("name:frpc")
-    print("Version:" + Version)
-    print("Depends:main")
-    print("License:GPL-2.0")
-    print("Description:frp内网穿透客户端")
-    print("issued:pkg") 
+    data = {}
+    data["Package"] = name
+    data["names"] = "frpc"
+    data["namei"] = {}
+    data["namei"]["zh-CN"] = "frpc".encode("utf-8")
+
+    data["Version"] = Version
+    data["Depends"] = "main"
+    data["License"] = "GPL-2.0"
+    data["Description"] = "frp内网穿透客户端"
+    data["Descriptions"] = {}
+    data["Descriptions"]["zh-CN"] = "frp内网穿透客户端".encode("utf-8")
+    data["issued"] = "pkg"
+
+    return data
 
 def ybsh(sh,file):
     os.system(sh)
