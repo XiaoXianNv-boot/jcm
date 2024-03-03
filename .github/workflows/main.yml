@@ -5,7 +5,7 @@ name: 生成包和二进制文件
 on: [push]
 
 jobs:
-  生成包和二进制文件:
+  Build-bin-updata:
     runs-on: ubuntu-latest
     steps:
       - name: 获取存储库
