@@ -7,6 +7,7 @@ import os
 import sys
 
 name = "main"
+Version = "V0.2"
 
 def install(new_client_socket,post,Versino,Headers,info,prin):
     import imp
