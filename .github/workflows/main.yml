@@ -11,7 +11,7 @@ jobs:
       - name: 获取存储库
         uses: actions/checkout@v4
       - name: 安装依赖
-        run: apt install -y p7zip-full && sudo dpkg --add-architecture i386 && sudo mkdir -pm755 /etc/apt/keyrings && sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key && sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources &&  sudo apt update && sudo apt install -y --install-recommends winehq-stable
+        run: sudo apt install -y p7zip-full && sudo dpkg --add-architecture i386 && sudo mkdir -pm755 /etc/apt/keyrings && sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key && sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources &&  sudo apt update && sudo apt install -y --install-recommends winehq-stable
       - name: 生成包
         run: python3 actions.py
       - name: 上传包 pkg
