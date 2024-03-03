@@ -129,6 +129,9 @@ print('pkg out V1.0')
 #os.system("rm -rf .jcm/pkg/Packages")
 os.system("rm -rf .jcm/*/Packages")
 
+os.system("mkdir -p .jcm")
+os.system("mkdir -p .jcm/pkg")
+
 download_all()
 
 path = os.listdir("./server")
