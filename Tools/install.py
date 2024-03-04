@@ -71,7 +71,7 @@ def progress_bar( nb_traits,name,d):
 def down(rul,dir,d): #
     sys.stdout.write(dir.split('/')[-1] + d + ' : Downloading...')
     sys.stdout.flush()
-    bresp = requests.get(rul, stream=True, verify=False)
+    bresp = requests.get(rul, stream=True, verify=False, timeout=60)
     if (bresp.status_code != 200): # When the layer is located at a custom URL
         if(bresp.status_code == 404):
             print('\rERROR: Cannot download layer {} [HTTP {}]'.format(dir.split('/')[-1], bresp.status_code, ""))
@@ -113,7 +113,7 @@ try:
     language = language[0]
     #language = "zh_CN"
     if os.path.exists("language/Tools/install.py/" + language + ".py") == False:#从git下载
-        down(gitrul + "/language/Tools/install.py/" + language + ".py","language/Tools/install.py/" + language + ".py","\t\t\t")
+        down(gitrul + "/language/" + language + ".py","language/Tools/install.py/" + language + ".py","\t\t\t")
     if os.path.exists("language/Tools/install.py/" + language + ".py") == False:#失败从mirror下载
         down(mirrorrul + "/install/language/install.py/" + language + ".py","language/Tools/install.py/" + language + ".py","\t\t\t")
 
