@@ -48,5 +48,5 @@ jobs:
           draft: false
           prerelease: false
           files: |
-              jcm/install/language/*
+              jcm/install/language/* 
            
