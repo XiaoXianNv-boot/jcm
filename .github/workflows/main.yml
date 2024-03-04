@@ -37,4 +37,16 @@ jobs:
           prerelease: false
           files: |
               jcm/install/*
+       
+      - name: 上传包 language
+        uses: softprops/action-gh-release@v1
+        if: true
+        with:
+          tag_name: language
+          name: language
+          body: language 软件包
+          draft: false
+          prerelease: false
+          files: |
+              jcm/install/language/*
            
