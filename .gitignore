@@ -24,6 +24,7 @@ mono_crash.*
 .config/
 .jcm/
 jcm/
+lib/pkg
 venv/
 x64/
 x86/
