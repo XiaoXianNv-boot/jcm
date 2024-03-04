@@ -44,7 +44,7 @@ def down(rul,dir,d,prin,new_client_socket):
     acc = 0
     nb_traits = 0
     progress_bar( nb_traits,dir.split('/')[-1],d,prin,new_client_socket)
-    with open(".out/" + name + "_V0.2.pkg/" + dir.split("/")[-1], "wb") as file:
+    with open(".out/" + name + "_" + Version + ".pkg/" + dir.split("/")[-1], "wb") as file:
         for chunk in bresp.iter_content(chunk_size=8192): 
             if chunk:
                 file.write(chunk)
@@ -54,7 +54,7 @@ def down(rul,dir,d,prin,new_client_socket):
                     progress_bar( nb_traits,dir.split('/')[-1],d,prin,new_client_socket)
                     acc = 0
     prin(new_client_socket,("\r{}".format(dir.split('/')[-1]) + d + " : Extracting...{}".format(" "*50)).encode("utf-8")) # Ugly but works everywhere
-    os.rename(".out/" + name + "_V0.2.pkg/" + dir.split("/")[-1],dir)
+    os.rename(".out/" + name + "_" + Version + ".pkg/" + dir.split("/")[-1],dir)
 
     prin(new_client_socket,("\r{}".format(dir.split('/')[-1]) + d + " : Pull complete [{}]".format(bresp.headers['Content-Length'])).encode("utf-8"))
 
@@ -80,8 +80,8 @@ def install(new_client_socket,post,Versino,Headers,info,prin):
             prin(new_client_socket,("\n\r").encode("utf-8"))      
         if os.path.exists("Tools/openhardwaremonitor") == False:
             os.system("Tools\\7z\\7z.exe x lib\\openhardwaremonitor-v0.9.6.zip -r -oTools\\openhardwaremonitor -aoa")
-    prin(new_client_socket,("install " + name + " V0.2\n\r").encode("utf-8"))      
-    os.system("cp -rf .out/" + name + "_V0.2.pkg/.out/* ./")
+    prin(new_client_socket,("install " + name + " " + Version + "\n\r").encode("utf-8"))      
+    os.system("cp -rf .out/" + name + "_" + Version + ".pkg/.out/* ./")
     
     if inpkg == "install":
         os.system("echo " + name + ">>server/server.ini")
@@ -111,7 +111,7 @@ def install(new_client_socket,post,Versino,Headers,info,prin):
         run.shutdown("reset")
         #sys.exit()
     #prin(new_client_socket,("END\n\r").encode("utf-8"))   
-    os.system("rm -rf .out/" + name + "_V0.2.pkg")
+    os.system("rm -rf .out/" + name + "_" + Version + ".pkg")
 def remove():
     os.system("rm -rf server/" + name)
     os.system("rm -rf web/" + name)
