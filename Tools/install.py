@@ -19,8 +19,8 @@ urllib3.disable_warnings()
 
 #os.chdir("install/jcm_install")
 
-gitrul = "https://github.com/XiaoXianNv-boot/jcm/raw/master"
-githul = "https://github.com/XiaoXianNv-boot/jcm/releases/download"
+#gitrul = "https://github.com/XiaoXianNv-boot/jcm/raw/master"
+gitrul = "https://github.com/XiaoXianNv-boot/jcm/releases/download"
 mirrorrul = "https://jiang144.i234.me/data/jcm"
 
 install_diri = b"C:\jcm"
@@ -181,8 +181,8 @@ if OS_ == 'Windows':
 else:
     install_diri = b"/usr/jcm"
 
-if os.path.exists("lib/pkg/main_V0.2.pkg") == False:
-    dl("/pkg/main_V0.2.pkg","lib/pkg/main_V0.2.pkg","\t\t")
+if os.path.exists("lib/pkg/main_V0.3.pkg") == False:
+    dl("/pkg/main_V0.3.pkg","lib/pkg/main_V0.3.pkg","\t\t")
 
 print(text["name"])
 install_dir = b''
@@ -341,16 +341,16 @@ if install_ != b'exit':
         if os.path.exists(install_dir.decode("utf-8") + "/.out") == False:
             os.mkdir(install_dir.decode("utf-8") + "/.out")
         print("install main")
-        if os.path.exists(install_dir.decode("utf-8") + "/.out/main_V0.2.pkg") == False:
-            os.mkdir(install_dir.decode("utf-8") + "/.out/main_V0.2.pkg")
-        if os.path.exists(install_dir.decode("utf-8") + "/.out/main_V0.2.pkg/") == False:
-            os.mkdir(install_dir.decode("utf-8") + "/.out/main_V0.2.pkg/")
+        if os.path.exists(install_dir.decode("utf-8") + "/.out/main_V0.3.pkg") == False:
+            os.mkdir(install_dir.decode("utf-8") + "/.out/main_V0.3.pkg")
+        if os.path.exists(install_dir.decode("utf-8") + "/.out/main_V0.3.pkg/") == False:
+            os.mkdir(install_dir.decode("utf-8") + "/.out/main_V0.3.pkg/")
 
-        sh = "tar xzf lib/pkg/main_V0.2.pkg " + "-C .out/main_V0.2.pkg/"
+        sh = "tar xzf lib/pkg/main_V0.3.pkg " + "-C .out/main_V0.3.pkg/"
         #print(sh)
         #os.system("pwd")
         os.system(sh)
-        sh = install_dir.decode("utf-8") + "/.out/main_V0.2.pkg/.out/server/main/Package.py "
+        sh = install_dir.decode("utf-8") + "/.out/main_V0.3.pkg/.out/server/main/Package.py "
         sh = imp.load_source(sh,sh)
         sh.install("","","","","",pr)
         '''print("install APP")
@@ -441,14 +441,14 @@ if __name__ == '__main__':\r\n\
         os.system("cp \"" + pwd + "/api.sh\" " + install_dir.decode("utf-8") + "/")
         os.system("chmod 777 " + install_dir.decode("utf-8") + "/api.sh")
         os.system("mkdir -p " + install_dir.decode("utf-8") + "/.out")
-        os.system("mkdir -p " + install_dir.decode("utf-8") + "/.out/main_V0.2.pkg")
-        os.system("mkdir -p " + install_dir.decode("utf-8") + "/.out/main_V0.2.pkg/.out")
-        sh = "tar xzf lib/pkg/main_V0.2.pkg " + "-C .out/main_V0.2.pkg/"
+        os.system("mkdir -p " + install_dir.decode("utf-8") + "/.out/main_V0.3.pkg")
+        os.system("mkdir -p " + install_dir.decode("utf-8") + "/.out/main_V0.3.pkg/.out")
+        sh = "tar xzf lib/pkg/main_V0.3.pkg " + "-C .out/main_V0.3.pkg/"
 
         #print(sh)
         #os.system("pwd")
         os.system(sh)
-        sh = install_dir.decode("utf-8") + "/.out/main_V0.2.pkg/.out/server/main/Package.py"
+        sh = install_dir.decode("utf-8") + "/.out/main_V0.3.pkg/.out/server/main/Package.py"
         sh = imp.load_source(sh,sh)
         sh.install("","","","","",pr)
         '''print("install APP")
