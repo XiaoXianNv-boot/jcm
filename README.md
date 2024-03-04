@@ -5,7 +5,7 @@
 
 # 安装 install
 ```
-wget https://github.com/XiaoXianNv-boot/jcm/releases/download/Preview/install.sh -c && sh install.sh
+wget https://github.com/XiaoXianNv-boot/jcm/releases/download/install/install.sh -c && sh install.sh
 ```
 
 # 试用
