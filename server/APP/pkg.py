@@ -190,6 +190,7 @@ def crul(ip,dk,dir,prin,new_client_socket,file):
         if file != '':
             fs = open(file,'wb')
         while run == 0:
+            dowon = 0
             try:
                 d = client.recv(10240000)
             except Exception as e:
@@ -207,6 +208,7 @@ def crul(ip,dk,dir,prin,new_client_socket,file):
                 if dowscharcd == 0:
                     data = data + d
                     if len(data.split(b'\r\n\r\n')) > 1:
+                        dowon = 1
                         for ddd in data.split(b'\r\n\r\n')[0].split(b'\r\n'):
                             dddd = ddd.split(b': ')
                             if dddd[0] == b'Content-Length':
@@ -218,10 +220,11 @@ def crul(ip,dk,dir,prin,new_client_socket,file):
                         cd = len(data[len(data.split(b'\r\n\r\n')[0])+4:])
 
                     else:
-                        if cd == 0:
+                        if dowon == 1:
                             cd = len(data[len(data.split(b'\r\n\r\n')[0])+4:])
                             datas = data[len(data.split(b'\r\n\r\n')[0])+4:]
                             fs.write(datas)
+                            dowon = 0
                         else:
                             cd += len(d)
                             fs.write(d)
