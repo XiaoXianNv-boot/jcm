@@ -18,6 +18,224 @@ def prin(new_client_socket,data):
         httpserver = imp.load_source("server/main/httpserver.py","server/main/httpserver.py")
         httpserver.websockfs(new_client_socket,b'0' + data)
 
+def curl(rul,new_client_socket,file,datas,start,loop,stop):
+    tmp = rul.split('/')
+    tmpp = ''
+    if tmp[0] == 'http:':
+        tmpp = (tmp[2] + ':80').split(':')
+    else:
+        tmpp = (tmp[2] + ':443').split(':')
+    ruldir = "/".split('/')
+    ruldir[0] = tmp[0] + '//'
+    if len(tmpp) == 2:
+        ruldir[1] = rul[(len(ruldir[0] + tmpp[0])):]
+    else:
+        ruldir[1] = rul[(len(ruldir[0] + tmpp[0] + ':' + tmpp[1])):]
+    host = tmpp[0]
+    port = int(tmpp[1])
+    dir  = ruldir[1]
+
+    socket.setdefaulttimeout(10)
+    client = socket.socket() #定义协议类型,相当于生命socket类型,同时生成socket连接对象
+
+    if ruldir[0] == "https://":
+        client = ssl.wrap_socket(client,cert_reqs=ssl.CERT_REQUIRED,ca_certs='server/main/DigiCert Global Root CA.crt')
+    fsdata = 'GET ' + dir + ' HTTP/1.1\r\n'
+    if ruldir[0] == "https://":
+        if port == 443:
+            fsdata = fsdata + 'Host: ' + host + '\r\n'
+        else:
+            fsdata = fsdata + 'Host: ' + host + ':' + str(port) + '\r\n'
+    else: 
+        if port == 80:
+            fsdata = fsdata + 'Host: ' + host + '\r\n'
+        else:
+            fsdata = fsdata + 'Host: ' + host + ':' + str(port) + '\r\n'
+    fsdata = fsdata + 'Referer: ' + ruldir[0] + host + dir + '\r\n'
+    if os.path.exists(".config/main/cookie"):
+        fs = open(".config/main/cookie","rb")
+        for c in fs.read().decode("utf-8").split('\n'):
+            if c.split(':')[0] == host:
+                fsdata = fsdata + 'Cookie: ' + c.split(':')[1] + '\r\n'
+
+    client.connect((host,port))
+    client.send((fsdata + '\r\n').encode("utf-8"))
+    data = b''
+
+    lens = 0     #已经下载长度
+    lenmax = -1  #总长度
+    run = 0
+    hasattr = ""
+    fs = ''
+    while run == 0:
+        d = client.recv(10240000)
+        if d:
+            if hasattr == "":
+                data += d
+                hasattr = data.split(b'\r\n\r\n')
+                if len(hasattr) == 1:
+                    hasattr = ""
+                else:
+                    hasattr = hasattr[0]
+                    hasattr = hasattr.split(b'\r\n')
+                    for ddd in hasattr:
+                        dddd = ddd.split(b': ')
+                        if dddd[0] == b'Content-Length':
+                            lenmax = int(dddd[1])
+                    lens = len(data[len(data.split(b'\r\n\r\n')[0])+4:])
+                    data = data[len(data.split(b'\r\n\r\n')[0])+4:]
+                    datas = start(data,lens,lenmax,new_client_socket,datas,hasattr)
+                    if hasattr[0].split(b" ")[1] == b"200":
+                        if file != '':
+                            fs = open(file,'wb')
+                            fs.write(data)
+                    if lenmax == 0:
+                        run = 1
+            else:
+                lens += len(d) 
+                if hasattr[0].split(b" ")[1] == b"200":
+                    if fs == '':
+                        data += d
+                    else:
+                        fs.write(d)
+                        data = b""
+                else:
+                    data += d
+                datas = loop(data,lens,lenmax,new_client_socket,datas,hasattr)
+                if lens == lenmax:
+                    run = 1
+                    fs.close()
+                    datas = stop(data,lens,lenmax,new_client_socket,datas,hasattr)
+        else:
+            run = 1
+    return hasattr,data
+
+def wget(rul,new_client_socket,file,datas,start,loop,stop):
+    hasattr,data = curl(rul,new_client_socket,file,datas,start,loop,stop)
+    cat = hasattr[0].split(b" ")[1].decode('utf-8')
+    prin = datas["prin"]
+    if cat == '301':
+        for d in hasattr:
+            dd = d.split(b': ')
+            if dd[0] == b'Location':
+                rul = d[len(dd[0] + b": "):].decode("utf-8")
+        prin(new_client_socket,(' 301\r\n').encode("utf-8"))
+        prin(new_client_socket,rul.encode("utf-8"))
+        hasattr,data = wget(rul,new_client_socket,file,datas,start,loop,stop)
+    elif cat == '302':
+        for d in hasattr:
+            dd = d.split(b': ')
+            if dd[0] == b'Location':
+                rul = d[len(dd[0] + b": "):].decode("utf-8")
+        prin(new_client_socket,(' 302\r\n        ').encode("utf-8"))
+        prin(new_client_socket,rul.encode("utf-8"))
+        hasattr,data = wget(rul,new_client_socket,file,datas,start,loop,stop)
+    prin(new_client_socket,('\r\n').encode("utf-8"))
+    return hasattr,data
+
+def bitto(size):
+    if size < 1024:
+        ramall = str(size)
+        ramall = ramall + "B"
+    elif size < (1024 * 1024):
+        ramall = str(size / 1024)
+        if len(ramall.split('.')) == 2:
+            if len(ramall.split('.')[1]) > 2:
+                ramall = ramall.split('.')[0] + '.' + ramall.split('.')[1][:2] + "KB"
+            else:
+                ramall = ramall + "KB"
+        else:
+            ramall = ramall + "KB"
+    elif size < (1024 * 1024 * 1024):
+        ramall = str(size / 1024 / 1024)
+        if len(ramall.split('.')) == 2:
+            if len(ramall.split('.')[1]) > 2:
+                ramall = ramall.split('.')[0] + '.' + ramall.split('.')[1][:2] + "MB"
+            else:
+                ramall = ramall + "MB"
+        else:
+            ramall = ramall + "MB"
+    elif size < (1024 * 1024 * 1024 * 1024):
+        ramall = str(size / 1024 / 1024 / 1024)
+        if len(ramall.split('.')) == 2:
+            if len(ramall.split('.')[1]) > 2:
+                ramall = ramall.split('.')[0] + '.' + ramall.split('.')[1][:2] + "GB"
+            else:
+                ramall = ramall + "GB"
+        else:
+            ramall = ramall + "GB"
+    return ramall
+    
+
+def start(data,lens,lenmax,new_client_socket,datas,hasattr):
+    #for d in hasattr:
+    #    print(d)
+    datas["times"] = time.strftime("%S", time.localtime())
+
+    print("[" + str(lens) + " / " + str(lenmax) + "]\r",end="")
+    prin = datas["prin"]
+    datas["cdt"] = ""
+
+    datas["cdt"] = " [" 
+    datas["cdt"] += bitto(lens) 
+    datas["cdt"] += "/" 
+    datas["cdt"] += bitto(lenmax) 
+    datas["cdt"] += "] " 
+    if lenmax == 0:
+        datas["cdt"] += ""
+    elif lenmax == -1:
+        datas["cdt"] += ""
+    else:
+        datas["cdt"] += '{:.2%}'.format(lens/lenmax)
+    prin(new_client_socket,(datas["cdt"]).encode("utf-8"))
+    return datas
+def loop(data,lens,lenmax,new_client_socket,datas,hasattr):
+    print("[" + str(lens) + " / " + str(lenmax) + "]\r",end="")
+
+    if datas["times"] != time.strftime("%S", time.localtime()):
+        datas["times"] = time.strftime("%S", time.localtime())
+
+        jdcd = len(datas["cdt"])
+        while jdcd != 0:
+            prin(new_client_socket,('\b \b').encode("utf-8"))
+            jdcd = jdcd - 1
+
+        datas["cdt"] = " [" 
+        datas["cdt"] += bitto(lens) 
+        datas["cdt"] += "/" 
+        datas["cdt"] += bitto(lenmax) 
+        datas["cdt"] += "] " 
+        if lenmax == 0:
+            datas["cdt"] += ""
+        elif lenmax == -1:
+            datas["cdt"] += ""
+        else:
+            datas["cdt"] += '{:.2%}'.format(lens/lenmax)    
+        prin(new_client_socket,(datas["cdt"]).encode("utf-8"))
+
+    return datas
+def end(data,lens,lenmax,new_client_socket,datas,hasattr):
+    print("[" + str(lens) + " / " + str(lenmax) + "]\r",end="")
+    
+    jdcd = len(datas["cdt"])
+    while jdcd != 0:
+        prin(new_client_socket,('\b \b').encode("utf-8"))
+        jdcd = jdcd - 1
+
+    datas["cdt"] = " [" 
+    datas["cdt"] += bitto(lens) 
+    datas["cdt"] += "/" 
+    datas["cdt"] += bitto(lenmax) 
+    datas["cdt"] += "] " 
+    if lenmax == 0:
+        datas["cdt"] += ""
+    elif lenmax == -1:
+        datas["cdt"] += ""
+    else:
+        datas["cdt"] += '{:.2%}'.format(lens/lenmax)    
+    prin(new_client_socket,(datas["cdt"]).encode("utf-8"))
+
+    return datas
 
 
 def main(new_client_socket,post,Versino,Headers,info,user):
@@ -36,7 +254,91 @@ def main(new_client_socket,post,Versino,Headers,info,user):
         httpserver = imp.load_source("server/main/httpserver.py","server/main/httpserver.py")
         httpserver.websockend(new_client_socket,b"END\r\n")
 
+# 获取包地址 
+def catpkgrulinfo(posts):
+    res = {}
+    data = {}
+    yuan = os.listdir(".config/APP/data/")
+    yuan.sort(reverse=True)
+    for y in yuan:
+        fs = open(".config/APP/data/" + y,'rb')
+        yrul = fs.read().decode("utf-8").split('\n')[1:-1]
+        for i in yrul:
+            i = i.split(',')
+            for d in i:
+                if d != '\r':
+                    d = d.split('"')
+                    data[d[1]] = d[3]
+            if data["Package"] == posts[1]:
+                if len(posts) == 3:
+                    if data["Version"] == posts[2]:
+                        for d in i:
+                            if d != '\r':
+                                d = d.split('"')
+                                res[d[1]] = d[3]
+                else:
+                    if len(res) == 0:
+                        for d in i:
+                            if d != '\r':
+                                d = d.split('"')
+                                res[d[1]] = d[3]
+                    else:
+                        if float(data["Version"][1:]) > float(res["Version"][1:]):
+                            for d in i:
+                                if d != '\r':
+                                    d = d.split('"')
+                                    res[d[1]] = d[3]
+    return res
+
 def install(new_client_socket,post,Versino,Headers,info):
+    posts = post[2].split('=')
+    if posts[0] == 'bash':
+        posts = posts[1].split('_')
+        pkg = catpkgrulinfo(posts)
+        if len(pkg) == 0:
+            prin(new_client_socket,("Package not found").encode("utf-8"))
+            return
+        else:
+            prin(new_client_socket,b'wget ')
+            rul = pkg["rul"] + "/" + pkg["file"]
+            prin(new_client_socket,rul.encode("utf-8"))
+            if os.path.exists(".tmp/APP/dl/" + rul.split('/')[-1]):
+                os.remove(".tmp/APP/dl/" + rul.split('/')[-1])
+            if os.path.exists(".tmp") == False:
+                os.mkdir(".tmp")
+            if os.path.exists(".tmp/APP") == False:
+                os.mkdir(".tmp/APP")
+            if os.path.exists(".tmp/APP/dl") == False:
+                os.mkdir(".tmp/APP/dl")
+            datas = {}
+            datas["prin"] = prin
+            hasattr,data = wget(rul,
+            new_client_socket,
+            ".tmp/APP/dl/" + rul.split('/')[-1],
+            datas,
+            start,loop,end)
+
+            cat = hasattr[0].split(b" ")[1].decode('utf-8')
+
+            if cat == '200':
+                if os.path.exists(".out/" + rul.split('/')[-1]):
+                    os.system("rm -rf .out/" + rul.split('/')[-1])
+                if not os.path.exists(".out"):
+                    os.mkdir(".out")
+                os.mkdir(".out/" + rul.split('/')[-1])
+                sh = "tar xzf .tmp/APP/dl/" + rul.split('/')[-1] + " -C .out/" + rul.split('/')[-1]
+                os.system(sh)
+                sh = ".out/"  + rul.split('/')[-1] + "/.out/server/" + posts[1] + "/Package.py"
+                sh = imp.load_source(sh,sh)
+                sh.install(new_client_socket,post,Versino,Headers,info,prin)
+                prin(new_client_socket,('').encode("utf-8"))
+            else:
+                prin(new_client_socket,(' \x1B[1;3;31mERROR: ' + cat.decode('utf-8') + '\x1B[0m\r\n').encode("utf-8"))
+
+
+            rull = ''
+
+def installl(new_client_socket,post,Versino,Headers,info):
     posts = post[2].split('=')
     rull = ''
     data = {}
@@ -99,7 +401,17 @@ def install(new_client_socket,post,Versino,Headers,info):
         os.mkdir(".tmp/APP")
     if os.path.exists(".tmp/APP/dl") == False:
         os.mkdir(".tmp/APP/dl")
-    cat,cdata = Client(rul,prin,new_client_socket,".tmp/APP/dl/" + rul.split('/')[-1])
+    datas = {}
+    datas["prin"] = prin
+    hasattr,data = wget(rul,
+    new_client_socket,
+    ".tmp/APP/dl/" + rul.split('/')[-1],
+    datas,
+    start,loop,end)
+
+    #cat,cdata = Client(rul,prin,new_client_socket,".tmp/APP/dl/" + rul.split('/')[-1])
+    cat = hasattr[0].split(b" ")[1].decode('utf-8')
+
     prin(new_client_socket,b'\r\n')
     if cat == '200':
         #cdata = cdata.decode('utf-8')
@@ -120,9 +432,9 @@ def install(new_client_socket,post,Versino,Headers,info):
         #data = shrun.buffer.read().decode(encoding='utf8')
         prin(new_client_socket,('').encode("utf-8"))
     else:
-        prin(new_client_socket,(' \x1B[1;3;31mERROR: ' + cdata.decode('utf-8') + '\x1B[0m\r\n').encode("utf-8"))
+        prin(new_client_socket,(' \x1B[1;3;31mERROR: ' + cat.decode('utf-8') + '\x1B[0m\r\n').encode("utf-8"))
         fs.close()
-        
+    
 
 def Client(yyrul,prin,new_client_socket,file):
 

@@ -22,5 +22,5 @@ def main(new_client_socket,RUL_CS,post_data,Headers,info,user):
         err = traceback.format_exc().split('\n')[:-1]
         for ee in err:
             httpserver.websockfs(new_client_socket,('0' + ee + '\r\n').encode("utf-8"))
-    httpserver.websockend(new_client_socket,b"exit")
+        httpserver.websockend(new_client_socket,b"exit")
 
