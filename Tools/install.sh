@@ -25,7 +25,6 @@ if [ ! -e /usr/bin/curl ]; then
         fi
     fi
 fi
-if [ ! -e /bin/python3 ]; then
     if [ -e /bin/apt ]; then
         apt update
         apt install -y python3
@@ -45,11 +44,14 @@ if [ ! -e /bin/python3 ]; then
                 if [ -e /bin/opkg ]; then
                     opkg update
                     opkg install python3
+                    opkg install python3-venv
+                    opkg install python3-pip
+                    opkg install python3-dev
                 fi
             fi
         fi
     fi
-fi
+
 
 mkdir -p jcm_install
 cd jcm_install
@@ -70,6 +72,4 @@ cd pkg
 cd ..
 cd ..
 
-python3 -m venv venv
-source ./venv/bin/activate
 python3 Tools/install.py %1 %2 %3 %4 %5
