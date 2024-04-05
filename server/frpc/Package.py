@@ -6,6 +6,7 @@
 import os
 import sys
 import platform
+import importlib
 
 name = "frpc"
 Version = "V0.2"
@@ -52,23 +53,40 @@ def install(new_client_socket,post,Versino,Headers,info,prin):
     prin(new_client_socket,("系统架构 " + platform.machine() + " \n\r").encode("utf-8")) 
     gz = platform.machine()  
     os.system("cp -rf .out/" + name + "_" + Version + ".pkg/.out/* ./")
+    if os.path.exists("lib/frp") == False:
+        os.mkdir("lib/frp")
     if platform.system() == "Windows":
-        pkg = ''
+        file = "frp_0.51.3_windows_amd64.zip"
+        os.system('mkdir .tmp')
+        sh = "server/APP/pkg.py"
+        run = importlib.machinery.SourceFileLoader(sh, sh).load_module()
+        run.dl("/lib/" + file,"lib/frp/" + file,"",new_client_socket,prin)
+        installs(new_client_socket,post,Versino,Headers,info,prin,"lib/frp/" + file)
+
     else:
         if gz == "armv7l":
-            gz = "arm"
+            file = "frp_0.51.3_linux_arm.tar.gz"
             os.system('mkdir -p .tmp')
-            installs(new_client_socket,post,Versino,Headers,info,prin,"server/frpc/lib/frp_0.51.3_linux_" + gz + ".tar.gz")
-            
+            sh = "server/APP/pkg.py"
+            run = importlib.machinery.SourceFileLoader(sh, sh).load_module()
+            run.dl("/lib/" + file,"lib/frp/" + file,"",new_client_socket,prin)
+            installs(new_client_socket,post,Versino,Headers,info,prin,"lib/frp/" + file)
+
         elif gz == "x86_64":
-            gz = "amd64"
+            file = "frp_0.51.3_linux_amd64.tar.gz"
             os.system('mkdir -p .tmp')
-            installs(new_client_socket,post,Versino,Headers,info,prin,"server/frpc/lib/frp_0.51.3_linux_" + gz + ".tar.gz")
+            sh = "server/APP/pkg.py"
+            run = importlib.machinery.SourceFileLoader(sh, sh).load_module()
+            run.dl("/lib/" + file,"lib/frp/" + file,"",new_client_socket,prin)
+            installs(new_client_socket,post,Versino,Headers,info,prin,"lib/frp/" + file)
 
         elif gz == "aarch64":
-            gz = "arm64"
+            file = "frp_0.51.3_linux_arm64.tar.gz"
             os.system('mkdir -p .tmp')
-            installs(new_client_socket,post,Versino,Headers,info,prin,"server/frpc/lib/frp_0.51.3_linux_" + gz + ".tar.gz")
+            sh = "server/APP/pkg.py"
+            run = importlib.machinery.SourceFileLoader(sh, sh).load_module()
+            run.dl("/lib/" + file,"lib/frp/" + file,"",new_client_socket,prin)
+            installs(new_client_socket,post,Versino,Headers,info,prin,"lib/frp/" + file)
 
         else:
             prin(new_client_socket,("安装脚本不支持此架构 " + platform.machine() + " \n\r").encode("utf-8"))  
