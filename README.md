@@ -5,9 +5,12 @@
 
 # 安装 install
 ```
-wget https://github.com/XiaoXianNv-boot/jcm/releases/download/install/install.sh -c && sh install.sh
+wget https://github.com/XiaoXianNv-boot/jcm/releases/download/install/install.sh -c -O install.sh && sh install.sh
 ```
-
+或
+```
+curl -#fL -o install.sh -C -  https://github.com/XiaoXianNv-boot/jcm/releases/download/install/install.sh && sh install.sh
+```
 # 试用
 ```
 git clone https://github.com/XiaoXianNv-boot/jcm
