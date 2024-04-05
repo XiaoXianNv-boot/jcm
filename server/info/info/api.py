@@ -149,14 +149,14 @@ def catdisk(OS):
                 #    rams = ramstmp[0] + '.' + ramstmp[1][:2] + ramstmp[1][-2:]
                 #cpu = psutil.cpu_percent(i + 1)
                 diskinfo = " " + diskfo[i].fstype + ' ' + rams + ' / ' + ramall
-                lenmax = len(diskinfo) + len(device)
+                lenmax = len(diskinfo) + len(device.split('\t')[0])
                 if OS == "Windows":
                     device = device[:-1]
         #        if lenmax > 35:
         #            lenmax = len(device) - len(diskinfo) - 3 - 10
         #            diskinfo = device[:10] + '...' + device[lenmax:] + diskinfo
         #        else:    
-                diskinfo = device + diskinfo 
+                diskinfo = device.split('\t')[0] + diskinfo 
                 if OS == "Windows":
                     name = diskfo[i].device[:-2]
                     diskinfo = " " + diskfo[i].fstype + ' ' + rams + ' / ' + ramall
@@ -177,7 +177,10 @@ def catdisk(OS):
         res = res + (('"disksmfo":"' + str(len(fo) - 1) + '","disksm":[\r\n').encode("utf-8"))
         for i in range(len(fo) - 1):
             data = os.popen('cat ' + fo[i]).read()
-            name = os.popen('cat /sys/class/mmc_host/' + fo[i].split('/')[-2].split(':')[0] + '/' + fo[i].split('/')[-2] + '/name').read().split('\n')[0]
+            name = os.popen('cat /sys/class/mmc_host/' + fo[i].split('/')[-2].split(':')[0] + '/' + fo[i].split('/')[-2] + '/name').read()
+            name = name.split('\n')[0]
+            #name = name.encode("utf-8")
+            name = name.split('\x11')[0]
             #print('cat ' + fo[i])
             #print('cat /sys/class/mmc_host/' + fo[i].split('/')[-2].split(':')[0] + '/' + fo[i].split('/')[-2] + '/name')
             sm = '0'
@@ -285,19 +288,41 @@ def catcpu(OS):
     #if len(cpuname) > 20:
     #    cpunam = cpuname.split('CPU')
     #    cpuname = cpunam[-1][1:]
-    time.sleep(0.1)
-    freq = psutil.cpu_freq(percpu=True)
-    cpu = psutil.cpu_percent(percpu=True)
-    if len(freq) != len(cpu):
-        if len(freq) == 1:
-            i = 0
-            fff=''
+    time.sleep(0.2)
+    try:
+        freq = psutil.cpu_freq(percpu=True)
+        cpu = psutil.cpu_percent(percpu=True)
+        if len(freq) != len(cpu):
+            if len(freq) == 1:
+                i = 0
+                fff=''
+                for i in range(fo):
+                    fff += str(freq[0].current) + '\t'
+                freq = fff.split('\t')
+        else:
             for i in range(fo):
-                fff += str(freq[0].current) + '\t'
-            freq = fff.split('\t')
-    else:
-        for i in range(fo):
-            freq[i] = str(freq[i].current)
+                freq[i] = str(freq[i].current)
+    except Exception as e:
+        freq = os.popen('cat /proc/cpuinfo | grep "cpu MHz"').read()
+        freq = freq.split("\n")[:-1]
+        cpu = psutil.cpu_percent(percpu=True)
+        if len(freq) != len(cpu):
+            if len(freq) == 0:
+                i = 0
+                fff=''
+                for i in range(fo):
+                    fff += "--" + '\t'
+                freq = fff.split('\t')
+            else:
+                i = 0
+                fff=''
+                for i in range(fo):
+                    fff += str(freq[0]) + '\t'
+                freq = fff.split('\t')
+        else:
+            for i in range(fo):
+                freq[i] = freq[i].split(" ")[-1]
+                freq[i] = str(freq[i])
     for i in range(fo):
         #cpu = psutil.cpu_percent(i + 1)
         if i == (fo - 1):
@@ -360,7 +385,14 @@ def catram():
     res = res + (('{"name":"交换空间","raminfo":"' + rams + ' / ' + ramall + '","ram":"' + str(ram.percent) + '"}\r\n').encode("utf-8"))
     return res
 
-def main(new_client_socket,RUL_CS,post_data,Headers,info,user):
+def main(data):
+    
+    new_client_socket = data["new_client_socket"]
+    RUL_CS            = data["RUL_CS"]
+    post_data         = data["post_data"]
+    Headers           = data["Headers"]
+    info              = data["info"]
+    user              = data["user"]
 
     OS = info['OS']
     bin = ''

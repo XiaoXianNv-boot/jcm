@@ -86,7 +86,14 @@ def Client(ip,dk,dir,post):
         return "404",e.args[-1].encode("utf-8")
     socket.setdefaulttimeout(0)
 
-def main(new_client_socket,RUL_CS,post_data,Headers,info,user):
+def main(data):
+    
+    new_client_socket = data["new_client_socket"]
+    RUL_CS            = data["RUL_CS"]
+    post_data         = data["post_data"]
+    Headers           = data["Headers"]
+    info              = data["info"]
+    user              = data["user"]
     res = ''
     devname = ''
     devrul = ''

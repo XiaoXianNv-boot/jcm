@@ -6,7 +6,14 @@ import os
 import imp
 import hashlib
 
-def main(new_client_socket,RUL_CS,post_data,Headers,info,user):
+def main(data):
+    
+    new_client_socket = data["new_client_socket"]
+    RUL_CS            = data["RUL_CS"]
+    post_data         = data["post_data"]
+    Headers           = data["Headers"]
+    info              = data["info"]
+    user              = data["user"]
     post = RUL_CS
     if len(post) == 3:
         link = ''
