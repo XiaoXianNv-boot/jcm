@@ -386,17 +386,26 @@ def tcplink(sock, addr , logs, info,void):
     data = void(new_client_socket,RUL,RUL_CS,post_data,Headers,logs,info)
     if data != 0:
         run_ = data
-    new_client_socket.close()
+        client = socket.socket() #定义协议类型,相当于生命socket类型,同时生成socket连接对象
+        client.connect(("127.0.0.1",info["port"]))
+        client.close()
+        client.connect(("127.0.0.1",info["port"]))
+        client.close()
+    #new_client_socket.close()
+    
+    datas = tcplink(sock, addr , logs, info,void)
+    if datas != 0:
+        data = datas
     return data
 
 def server(tcp_server_socket,info,logs,void):
     global run_
+    sock = ''
     run_ = 1
     while run_ > -1:
         try:
             print("start")
             while run_ > -1:
-                sock = ''
                 try:
                     sock, addr = tcp_server_socket.accept()
                     sock.settimeout(60)
@@ -404,6 +413,7 @@ def server(tcp_server_socket,info,logs,void):
                         run__ = tcplink(sock, addr , logs, info,void)
                         if run__ != 0:
                             run_ = run__
+
                     else:
                         t = threading.Thread(target=tcplink, args=(sock, addr , logs, info,void))
                         t.start()
