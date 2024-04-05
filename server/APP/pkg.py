@@ -728,6 +728,37 @@ def crul(ip,dk,dir,prin,new_client_socket,file):
         return "404",e.args[-1].encode("utf-8")
     socket.setdefaulttimeout(0)
 
+def dl(rul,dir,d,new_client_socket,prin):
+    if os.path.exists(".config/APP/pkg/main") == False:
+        prin(new_client_socket,('ERRROR No main addr\r\n').encode("utf-8"))
+    else:
+        yuan = os.listdir(".config/APP/pkg/main")
+        yuan.sort(reverse=True)
+        i = 2
+        while i > 0:
+            for y in yuan:
+                if os.path.exists(dir) == False:
+                    try:
+                        fs = open(".config/APP/pkg/main/" + y,'rb')
+                        yrul = fs.read().decode("utf-8").split('\n')
+                        datas = {}
+                        datas["prin"] = prin
+                        hasattr,data = wget(yrul + rul,
+                        new_client_socket,
+                        file,
+                        datas,
+                        start,loop,end)
+                        #down(y + rul,dir,d)
+                    except Exception as e:
+                        prin(new_client_socket,(e.args[0]).encode("utf-8"))
+            if os.path.exists(dir) == False:
+                i= i - 1
+                prin(new_client_socket,("[ 10 / " + str(i) + " ]").encode("utf-8"))
+                if i == 0:
+                    prin(new_client_socket,("Down ERR").encode("utf-8"))
+            else:
+                i = 0
+
 
 def update(new_client_socket,post,Versino,Headers,info):
     sh = ''
