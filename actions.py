@@ -267,4 +267,9 @@ os.system("cd .out \
 os.system("cp Tools/install.py jcm/install/")
 os.system("cp Tools/install.sh jcm/install/")
 os.system("cp language/Tools/install.py jcm/install/language -rf")
+
+os.system("mkdir -p jcm/lib")
+os.system("cp lib/* jcm/lib/")
+os.system("cp lib/*/* jcm/lib/")
+
 os.system("rm -rf .out")
