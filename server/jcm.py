@@ -24,7 +24,7 @@ try:
     language = language[0]
     #language = "zh_CN"
     if os.path.exists("language/server/init.py/" + language + ".py"):
-        run = imp.load_source('run',"language/server/init.py/" + language + ".py")
+        run = importlib.machinery.SourceFileLoader('run',"language/server/init.py/" + language + ".py").load_module()
         for textname in iftext.keys():
             try:
                 textval = run.text[textname]
