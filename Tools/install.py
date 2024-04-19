@@ -957,9 +957,10 @@ def init():
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
-        sys.argv = sys.argv[0],"install"
+        sys.argv = (sys.argv[0] + " init").split(" ")
 
     if sys.argv[1] == "install":
         install()
     elif sys.argv[1] == "init": 
+        initaddr()
         init()
