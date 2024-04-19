@@ -3,10 +3,19 @@
 
 import os
 import sys
-#import imp
-import importlib
+import imp
+#import importlib
 import locale
 import platform
+
+if platform.system() != "Windows":
+    try:
+        osuser = os.popen("id -un").read().split('\n')[0].split('\r')[0]
+        if osuser != "root":
+            print("No root user,exit!")
+            exit()
+    except Exception as e:
+        print(e.args)
 
 iftext = {}
 iftext["osname"] = "OS Name:"
@@ -24,7 +33,8 @@ try:
     language = language[0]
     #language = "zh_CN"
     if os.path.exists("language/server/init.py/" + language + ".py"):
-        run = importlib.machinery.SourceFileLoader('run',"language/server/init.py/" + language + ".py").load_module()
+        #run = importlib.machinery.SourceFileLoader('run',"language/server/init.py/" + language + ".py").load_module()
+        run = imp.load_source('run',"language/server/init.py/" + language + ".py")
         for textname in iftext.keys():
             try:
                 textval = run.text[textname]
@@ -39,6 +49,7 @@ try:
     language = language[0]
     #language = "zh_CN"
     if os.path.exists("language/server/init.py/" + language + ".py"):
+        #run = importlib.machinery.SourceFileLoader('run',"language/server/init.py/" + language + ".py").load_module()
         run = imp.load_source('run',"language/server/init.py/" + language + ".py")
         for textname in text.keys():
             try:
@@ -65,7 +76,8 @@ info['tmp'] = '/tmp/jcm'
 #获取版本
 def catVersino():
     sh = "server/main/Package.py"
-    sh = importlib.machinery.SourceFileLoader(sh, sh).load_module()
+    #sh = importlib.machinery.SourceFileLoader(sh, sh).load_module()
+    sh = imp.load_source(sh, sh)
     info["Versino"] = sh.Version
     info["Headers"] = "Server: JCM/" + sh.Version + "\r\n"
 #获取端口
@@ -153,8 +165,8 @@ if info['debug']:
         os.system("error.sh '" + "DEBUG" + "'")
     print('Debug')
 
-#run = imp.load_source('run',"server/run.py")
-run = importlib.machinery.SourceFileLoader('run', "server/run.py").load_module()
+run = imp.load_source('run',"server/run.py")
+#run = importlib.machinery.SourceFileLoader('run', "server/run.py").load_module()
 #if install == "L":
 #    if OS_ == "Linux":
 #        os.system("systemctl start jcm.service")
