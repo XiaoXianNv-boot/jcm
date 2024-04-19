@@ -16,6 +16,12 @@
 # Mono auto generated files
 mono_crash.*
 
+#novnc
+web/Ace_Admin/vnc/app/
+web/Ace_Admin/vnc/core/
+web/Ace_Admin/vnc/vendor/
+web/Ace_Admin/vnc/noVNC/
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
@@ -24,8 +30,10 @@ mono_crash.*
 .config/
 .jcm/
 jcm/
+web/Ace_Admin/dom/
 lib/pkg
 venv/
+Tools/.*
 x64/
 x86/
 jcm/
