@@ -544,7 +544,15 @@ def httpserver_void(new_client_socket,RUL,RUL_CS,post_data,Headers,logs,info):
 
                                 #post = post_data
                             sh = imp.load_source(RUL + "/api.py",my_file)
-                            sh.main(new_client_socket,RUL_CS,post_data,Headers,info,user)
+                            data = {}    
+                            data["new_client_socket"]   = new_client_socket
+                            data["RUL_CS"]              = RUL_CS
+                            data["post_data"]           = post_data
+                            data["Headers"]             = Headers
+                            data["info"]                = info
+                            data["user"]                = user
+
+                            sh.main(data)
                         else:
                             strr = {}
                             strr["err"] = '404'

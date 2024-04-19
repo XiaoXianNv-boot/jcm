@@ -17,7 +17,14 @@ def poweroff(info):
     t.start()
     return "30S halt"
 
-def main(new_client_socket,post,Headers,info,user):
+def main(data):
+    
+    new_client_socket = data["new_client_socket"]
+    RUL_CS            = data["RUL_CS"]
+    post_data         = data["post_data"]
+    Headers           = data["Headers"]
+    info              = data["info"]
+    user              = data["user"]
     link = ''
     path = ''
     res = '{}'
