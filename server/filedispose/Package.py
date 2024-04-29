@@ -47,13 +47,29 @@ def rm(dir,name):
             else:
                 rm(dir + p + '/',name)
 def info():
-    print("Package:" + name)
-    print("name:文件处理")
-    print("Version:" + Version)
-    print("Depends:main")
-    print("License:GPL-2.0")
-    print("Description:文件处理")
-    print("issued:pkg")
+    data = {}
+    #文件夹名称
+    data["Package"] = name
+    #首选名称
+    data["names"] = "文件处理"
+    #多国语言翻译
+    data["namei"] = {}
+    data["namei"]["zh-CN"] = "文件处理".encode("utf-8")
+    #版本
+    data["Version"] = Version
+    #依赖
+    data["Depends"] = "main"
+    #License
+    data["License"] = "GPL-2.0"
+    #首选解释
+    data["Description"] = "文件处理"
+    #多国语言翻译
+    data["Descriptions"] = {}
+    data["Descriptions"]["zh-CN"] = "文件处理".encode("utf-8")
+    #库名称
+    data["issued"] = "pkg"
+
+    return data
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
